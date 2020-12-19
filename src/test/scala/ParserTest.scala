@@ -36,12 +36,32 @@ class ParserTest extends FunSuite {
 
   test("Parser should parse simple binary operations") {
 
-    val expected = Option({
+    var expected = Option({
       val tree = Node(EmptyNode, ADD)
       tree.left = Node(tree, NumberToken(2))
-      tree.right = Node(tree, NumberToken(4))
+      tree.right = Node(tree, NumberToken(3))
       tree
     })
     testAST("2 + 3", expected, showInfo)
+
+    expected = Option({
+      val tree = Node(EmptyNode, SUBTRACT)
+      tree.setLeft(Node(tree, NumberToken(2)))
+      tree.setRight(Node(tree, NEGATION))
+      tree.right.setRight(Node(tree, NumberToken(3)))
+      tree
+    })
+    testAST("2 - -3", expected, showInfo)
+  }
+
+  test("negative exponents") {
+    val expected = Option({
+      val tree = Node(EmptyNode, EXPONENT)
+      tree.setLeft(Node(tree, NumberToken(2)))
+      tree.setRight(Node(tree, NEGATION))
+      tree.right.setRight(Node(tree.right, NumberToken(3)))
+      tree
+    })
+    testAST("2 ^ -3", expected, showInfo)
   }
 }

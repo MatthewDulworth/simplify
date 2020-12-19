@@ -16,7 +16,10 @@ case object Parser {
       case InvalidToken(_) => None
       case _ =>
         var currentNode = traverseCurrentUp(node, token)
-        currentNode = addNode(currentNode, token)
+        currentNode = token match {
+          case CLOSE_PAREN => closeParens(node)
+          case _ => insertNewNode(node, token)
+        }
         buildTree(lexer, currentNode)
     }
   }
@@ -31,11 +34,6 @@ case object Parser {
       currentNode
   }
 
-  private def addNode(node: ASTree, token: Token): ASTree = token match {
-    case CLOSE_PAREN => closeParens(node)
-    case _ => insertNewNode(node, token)
-  }
-
   private def closeParens(node: ASTree): ASTree = node.parent match {
     case parent: Node =>
       parent.setRight(node.right)
@@ -46,16 +44,16 @@ case object Parser {
   }
 
   private def insertNewNode(currentNode: ASTree, token: Token): ASTree = token match {
-    case token if token.isLessThan(currentNode.token) =>
-      assert(currentNode.parent == EmptyNode)
-      val newNode = Node(EmptyNode, token)
-      newNode.setLeft(currentNode)
-      newNode
-    case _ =>
-      val newNode = Node(currentNode, token)
-      newNode.setLeft(currentNode.right)
-      currentNode.right = newNode
-      newNode
+    case OPEN_PAREN | NEGATION => insert(token, currentNode, currentNode.right)
+    case token if token.isLessThan(currentNode.token) => insert(token, EmptyNode, currentNode)
+    case _ => insert(token, currentNode, currentNode.right)
+  }
+
+  private def insert(token: Token, parent: ASTree, child: ASTree): ASTree = {
+    val newNode = Node(parent, token)
+    newNode.setLeft(child)
+    parent.setRight(newNode)
+    newNode
   }
 
   private def treeRoot(startNode: ASTree): Option[ASTree] = {

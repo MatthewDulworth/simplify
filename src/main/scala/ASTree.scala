@@ -6,6 +6,10 @@ sealed trait ASTree extends PrintableNode {
   var right: ASTree
   val token: Token
 
+  def setLeft(newLeft: ASTree): Unit = {}
+
+  def setRight(newLeft: ASTree): Unit = {}
+
   def deepEquals(other: ASTree): Boolean
 }
 
@@ -37,12 +41,12 @@ case class Node(var parent: ASTree, token: Token) extends ASTree {
     this
   }
 
-  def setLeft(newLeft: ASTree): Unit = {
+  override def setLeft(newLeft: ASTree): Unit = {
     left = newLeft
     setChildParent(newLeft)
   }
 
-  def setRight(newRight: ASTree): Unit = {
+  override def setRight(newRight: ASTree): Unit = {
     right = newRight
     setChildParent(newRight)
   }
@@ -67,5 +71,6 @@ case class Node(var parent: ASTree, token: Token) extends ASTree {
 
   override def deepEquals(other: ASTree): Boolean = other match {
     case node: Node => token == node.token && left.deepEquals(other.left) && right.deepEquals(other.right)
+    case _ => false
   }
 }
