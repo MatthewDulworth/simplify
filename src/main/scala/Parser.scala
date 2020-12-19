@@ -37,8 +37,12 @@ case object Parser {
   }
 
   private def closeParens(node: ASTree): ASTree = node.parent match {
-    case parent: Node => parent.setRight(node.right)
-    case EmptyNode => node.right.asInstanceOf[Node].resetParent()
+    case parent: Node =>
+      parent.setRight(node.right)
+      parent
+    case EmptyNode =>
+      node.right.asInstanceOf[Node].resetParent()
+      node
   }
 
   private def insertNewNode(currentNode: ASTree, token: Token): ASTree = token match {
@@ -46,9 +50,12 @@ case object Parser {
       assert(currentNode.parent == EmptyNode)
       val newNode = Node(EmptyNode, token)
       newNode.setLeft(currentNode)
+      newNode
     case _ =>
       val newNode = Node(currentNode, token)
       newNode.setLeft(currentNode.right)
+      currentNode.right = newNode
+      newNode
   }
 
   private def treeRoot(startNode: ASTree): Option[ASTree] = {

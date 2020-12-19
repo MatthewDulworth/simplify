@@ -30,19 +30,19 @@ case class Node(var parent: ASTree, token: Token) extends ASTree {
     this
   }
 
-  def setLeft(newLeft: ASTree): ASTree = {
+  def setLeft(newLeft: ASTree): Unit = {
     left = newLeft
     setChildParent(newLeft)
   }
 
-  def setRight(newRight: ASTree): ASTree = {
+  def setRight(newRight: ASTree): Unit = {
     right = newRight
     setChildParent(newRight)
   }
 
-  private def setChildParent(child: ASTree) = child match {
-    case node: Node => node.parent = this; this
-    case _ => this
+  private def setChildParent(child: ASTree): Unit = child match {
+    case node: Node => node.parent = this
+    case _ =>
   }
 
   // debug methods
