@@ -2,13 +2,13 @@ import scala.annotation.tailrec
 
 case object Parser {
 
-  def parse(input: String): Option[Tree] = {
-    val lexer = new Lexer(String)
+  def parse(input: String): Option[ASTree] = {
+    val lexer = new Lexer(input)
     val currentNode = Node(EmptyNode, lexer.getNextToken)
     buildTree(lexer, currentNode)
   }
 
-  @tailrec private def buildTree(lexer: Lexer, node: Tree): Option[Tree] = {
+  @tailrec private def buildTree(lexer: Lexer, node: ASTree): Option[ASTree] = {
     val token = lexer.getNextToken
 
     token match {
@@ -21,7 +21,7 @@ case object Parser {
     }
   }
 
-  private def traverseCurrentUp(startNode: Tree, token: Token): Tree = token match {
+  private def traverseCurrentUp(startNode: ASTree, token: Token): ASTree = token match {
     case OPEN_PAREN | NEGATION => startNode
     case _ =>
       var currentNode = startNode
@@ -31,17 +31,17 @@ case object Parser {
       currentNode
   }
 
-  private def addNode(node: Tree, token: Token): Tree = token match {
+  private def addNode(node: ASTree, token: Token): ASTree = token match {
     case CLOSE_PAREN => closeParens(node)
     case _ => insertNewNode(node, token)
   }
 
-  private def closeParens(node: Tree): Tree = node.parent match {
+  private def closeParens(node: ASTree): ASTree = node.parent match {
     case parent: Node => parent.setRight(node.right)
     case EmptyNode => node.right.asInstanceOf[Node].resetParent()
   }
 
-  private def insertNewNode(currentNode: Tree, token: Token): Tree = token match {
+  private def insertNewNode(currentNode: ASTree, token: Token): ASTree = token match {
     case token if token.isLessThan(currentNode.token) =>
       assert(currentNode.parent == EmptyNode)
       val newNode = Node(EmptyNode, token)
@@ -51,7 +51,7 @@ case object Parser {
       newNode.setLeft(currentNode.right)
   }
 
-  private def treeRoot(startNode: Tree): Option[Tree] = {
+  private def treeRoot(startNode: ASTree): Option[ASTree] = {
     var node = startNode
     while (node.parent != EmptyNode) {
       node = node.parent
