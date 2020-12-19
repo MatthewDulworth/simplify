@@ -27,7 +27,7 @@ class Lexer(val input: String) {
     case '(' => OPEN_PAREN
     case ')' => CLOSE_PAREN
     case '-' => negOrSubToken
-    case l if l.isLetter => letterToken
+    case l if l.isLetter => letterToken(char)
     case d if d.isDigit || d == '.' => numberToken(char)
     case w if w.isWhitespace => getNextToken
     case _ => InvalidToken(char)
@@ -54,12 +54,12 @@ class Lexer(val input: String) {
     }
   }
 
-  def letterToken: Token = {
-    var c = nextChar
-    val value = new StringBuilder
-    while (c.isDefined && c.get.isLetter) {
-      value.append(c.get)
-      c = nextChar
+  def letterToken(c: Char): Token = {
+    val value = new StringBuilder(c.toString)
+    var char = nextChar
+    while (char.isDefined && char.get.isLetter) {
+      value.append(char.get)
+      char = nextChar
     }
 
     value.toString() match {

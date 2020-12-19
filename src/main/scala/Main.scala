@@ -11,11 +11,8 @@ object Main extends App {
     }
   }
 
-  val lexer = new Lexer("4.3")
+  val lexer = new Lexer("x")
   val tokens = new ArrayBuffer[Token]
   findTokens(lexer, tokens)
   println(tokens)
 }
-
-
-
