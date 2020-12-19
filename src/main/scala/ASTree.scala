@@ -5,6 +5,8 @@ sealed trait ASTree extends PrintableNode {
   var left: ASTree
   var right: ASTree
   val token: Token
+
+  def deepEquals(other: ASTree): Boolean
 }
 
 case object EmptyNode extends ASTree {
@@ -18,6 +20,11 @@ case object EmptyNode extends ASTree {
   override def getRight: PrintableNode = null
 
   override def getText: String = null
+
+  override def deepEquals(other: ASTree): Boolean = other match {
+    case EmptyNode => true
+    case _ => false
+  }
 }
 
 case class Node(var parent: ASTree, token: Token) extends ASTree {
@@ -57,4 +64,8 @@ case class Node(var parent: ASTree, token: Token) extends ASTree {
   }
 
   override def getText: String = token.symbol
+
+  override def deepEquals(other: ASTree): Boolean = other match {
+    case node: Node => token == node.token && left.deepEquals(other.left) && right.deepEquals(other.right)
+  }
 }
