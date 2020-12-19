@@ -24,17 +24,16 @@ case class Node(var parent: Tree, token: Token) extends Tree {
 
   def setLeft(newLeft: Tree): Tree = {
     left = newLeft
-    newLeft match {
-      case node: Node => node.parent = this
-    }
-    this
+    setChildParent(newLeft)
   }
 
   def setRight(newRight: Tree): Tree = {
     right = newRight
-    newRight match {
-      case node: Node => node.parent = this
-    }
-    this
+    setChildParent(newRight)
+  }
+
+  private def setChildParent(child: Tree) = child match {
+    case node: Node => node.parent = this; this
+    case _ => this
   }
 }

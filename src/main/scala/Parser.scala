@@ -14,7 +14,7 @@ case object Parser {
 
     token match {
       case EOF => treeRoot(node)
-      case i: InvalidToken => None
+      case InvalidToken(_) => None
       case _ =>
         var currentNode = traverseCurrentUp(node, token)
         currentNode = addNode(currentNode, token)
@@ -22,18 +22,14 @@ case object Parser {
     }
   }
 
-  def traverseCurrentUp(currentNode: Tree, token: Token): Tree = token match {
-    case OPEN_PAREN | NEGATION => currentNode
-    case r if r.rightAssociative => doTraversalUp(currentNode, token, _ > _)
-    case _ => doTraversalUp(currentNode, token, _ >= _)
-  }
-
-  def doTraversalUp(currentNode: Tree, token: Token, condition: (Double, Double) => Boolean): Tree = {
-    var node = currentNode
-    while (node.parent != EmptyNode && condition(node.token.precedence, token.precedence)) {
-      node = node.parent
-    }
-    node
+  def traverseCurrentUp(startNode: Tree, token: Token): Tree = token match {
+    case OPEN_PAREN | NEGATION => startNode
+    case _ =>
+      var currentNode = startNode
+      while (currentNode.parent != EmptyNode && token.isLessThan(currentNode.token)) {
+        currentNode = currentNode.parent
+      }
+      currentNode
   }
 
   def addNode(node: Tree, token: Token): Tree = token match {
@@ -46,20 +42,21 @@ case object Parser {
     case EmptyNode => node.right.asInstanceOf[Node].resetParent()
   }
 
-  def insertNewNode(node: Tree, token: Token): Tree = ???
+  def insertNewNode(currentNode: Tree, token: Token): Tree = token match {
+    case token if token.isLessThan(currentNode.token) =>
+      assert(currentNode.parent == EmptyNode)
+      val newNode = Node(EmptyNode, token)
+      newNode.setLeft(currentNode)
+    case _ =>
+      val newNode = Node(currentNode, token)
+      newNode.setLeft(currentNode.right)
+  }
 
-
-  def treeRoot(node: Tree): Option[Tree] = ???
+  def treeRoot(startNode: Tree): Option[Tree] = {
+    var node = startNode
+    while (node.parent != EmptyNode) {
+      node = node.parent
+    }
+    Some(node)
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,17 +1,18 @@
 sealed trait Token {
   val symbol: String
   val precedence: Int
-  val rightAssociative = false
+
+  def isLessThan(other: Token): Boolean = precedence < other.precedence
 }
 
 case class InvalidToken(invalidChar: Char) extends Token {
   override val symbol: String = invalidChar.toString
-  override val precedence: Int = -1
+  override val precedence: Int = Int.MinValue
 }
 
 case object EOF extends Token {
   override val symbol: String = ""
-  override val precedence: Int = -1
+  override val precedence: Int = Int.MinValue
 }
 
 case class NumberToken(value: Double) extends Token {
@@ -24,20 +25,23 @@ case class Variable(value: String) extends Token {
   override val precedence: Int = Int.MaxValue
 }
 
+trait RightAssociative extends Token {
+  override def isLessThan(other: Token): Boolean = precedence <= other.precedence
+}
+
 case object OPEN_PAREN extends Token {
   override val symbol = "("
   override val precedence = 1
 }
 
-case object CLOSE_PAREN extends Token {
+case object CLOSE_PAREN extends RightAssociative {
   override val symbol = ")"
   override val precedence = 1
-  override val rightAssociative = true;
 }
 
-case object NEGATION extends Token {
+case object NEGATION extends RightAssociative {
   override val symbol = "neg"
-  override val precedence = 4
+  override val precedence = 3
   val operation: Double => Double = _ * -1
 }
 
@@ -87,19 +91,18 @@ case object SUBTRACT extends BinaryOperator {
 
 case object MULTIPLY extends BinaryOperator {
   override val symbol = "*"
-  override val precedence = 3
+  override val precedence = 4
   override val operation: (Double, Double) => Double = _ * _
 }
 
 case object DIVIDE extends BinaryOperator {
   override val symbol = "/"
-  override val precedence = 3
+  override val precedence = 4
   override val operation: (Double, Double) => Double = _ / _
 }
 
-case object EXPONENT extends BinaryOperator {
+case object EXPONENT extends BinaryOperator with RightAssociative {
   override val symbol = "^"
   override val precedence = 5
-  override val rightAssociative = true
   override val operation: (Double, Double) => Double = Math.pow
 }
