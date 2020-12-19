@@ -16,26 +16,38 @@ case object Parser {
       case EOF => treeRoot(node)
       case i: InvalidToken => None
       case _ =>
-        var currentNode = updateCurrentNode(node, token)
-        currentNode = insertNode(currentNode, token)
+        var currentNode = traverseCurrentUp(node, token)
+        currentNode = addNode(currentNode, token)
         buildTree(lexer, currentNode)
     }
   }
 
-  def updateCurrentNode(currentNode: Tree, token: Token): Tree = token match {
-    case r if r.rightAssociative => traverseUp(currentNode, token, _ > _)
-    case t if t != OPEN_PAREN && t != CLOSE_PAREN => traverseUp(currentNode, token, _ >= _)
+  def traverseCurrentUp(currentNode: Tree, token: Token): Tree = token match {
+    case OPEN_PAREN | NEGATION => currentNode
+    case r if r.rightAssociative => doTraversalUp(currentNode, token, _ > _)
+    case _ => doTraversalUp(currentNode, token, _ >= _)
   }
 
-  def traverseUp(currentNode: Tree, token: Token, operator: (Double, Double) => Boolean): Tree = {
+  def doTraversalUp(currentNode: Tree, token: Token, condition: (Double, Double) => Boolean): Tree = {
     var node = currentNode
-    while (node.parent != EmptyNode && operator(node.token.precedence, token.precedence)) {
+    while (node.parent != EmptyNode && condition(node.token.precedence, token.precedence)) {
       node = node.parent
     }
     node
   }
 
-  def insertNode(tree: Tree, token: Token): Tree = ???
+  def addNode(node: Tree, token: Token): Tree = token match {
+    case CLOSE_PAREN => closeParens(node)
+    case _ => insertNewNode(node, token)
+  }
+
+  def closeParens(node: Tree): Tree = node.parent match {
+    case parent: Node => parent.setRight(node.right)
+    case EmptyNode => node.right.asInstanceOf[Node].resetParent()
+  }
+
+  def insertNewNode(node: Tree, token: Token): Tree = ???
+
 
   def treeRoot(node: Tree): Option[Tree] = ???
 }
