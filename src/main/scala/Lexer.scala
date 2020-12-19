@@ -4,11 +4,6 @@ class Lexer(val input: String) {
   private var previousToken: Option[Token] = None
   private var currentToken: Token = _
 
-  def nextChar: Option[Char] = {
-    cursor += 1
-    if (cursor < input.length) Some(input.charAt(cursor)) else None
-  }
-
   def getNextToken: Token = {
     val char = nextChar
     previousToken = Some(currentToken)
@@ -19,7 +14,12 @@ class Lexer(val input: String) {
     currentToken
   }
 
-  def tokenFromChar(char: Char): Token = char match {
+  private def nextChar: Option[Char] = {
+    cursor += 1
+    if (cursor < input.length) Some(input.charAt(cursor)) else None
+  }
+
+  private def tokenFromChar(char: Char): Token = char match {
     case '+' => ADD
     case '*' => MULTIPLY
     case '/' => DIVIDE
@@ -33,14 +33,14 @@ class Lexer(val input: String) {
     case _ => InvalidToken(char)
   }
 
-  def negOrSubToken: Token = previousToken match {
+  private def negOrSubToken: Token = previousToken match {
     case Some(NumberToken(n)) => SUBTRACT
     case Some(Variable(v)) => SUBTRACT
     case Some(CLOSE_PAREN) => SUBTRACT
     case _ => NEGATION
   }
 
-  def numberToken(c: Char): Token = {
+  private def numberToken(c: Char): Token = {
     val numBuilder = new StringBuilder(c.toString)
     var char = nextChar
     while (char.isDefined && (char.get.isDigit || char.get == '.')) {
@@ -54,7 +54,7 @@ class Lexer(val input: String) {
     }
   }
 
-  def letterToken(c: Char): Token = {
+  private def letterToken(c: Char): Token = {
     val value = new StringBuilder(c.toString)
     var char = nextChar
     while (char.isDefined && char.get.isLetter) {
