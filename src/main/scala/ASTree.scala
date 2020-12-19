@@ -1,20 +1,11 @@
 import TreePrinter.PrintableNode
 
 sealed trait ASTree extends PrintableNode {
-  var parent: ASTree
-  var left: ASTree
-  var right: ASTree
-  val token: Token
-
-}
-
-case object EmptyNode extends ASTree {
   var parent: ASTree = EmptyNode
   var left: ASTree = EmptyNode
   var right: ASTree = EmptyNode
   val token: Token = EOF
 
-  // debug methods
   override def getLeft: PrintableNode = null
 
   override def getRight: PrintableNode = null
@@ -22,10 +13,9 @@ case object EmptyNode extends ASTree {
   override def getText: String = null
 }
 
-case class Node(var parent: ASTree, token: Token) extends ASTree {
-  var left: ASTree = EmptyNode
-  var right: ASTree = EmptyNode
+case object EmptyNode extends ASTree
 
+case class Node(override var parent: ASTree, override val token: Token) extends ASTree {
 
   def resetParent(): ASTree = {
     parent = EmptyNode
