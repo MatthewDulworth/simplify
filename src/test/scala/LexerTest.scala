@@ -52,6 +52,20 @@ class LexerTest extends FunSuite {
     assert(lexer.getNextToken == EXPONENT)
   }
 
+  test("parentheses") {
+    val lexer = new Lexer("()");
+    val tokens = getTokens(lexer)
+    val exp = Vector(OPEN_PAREN, CLOSE_PAREN, EOF)
+    assert(tokens == exp)
+  }
+
+  test("parentheses expressions") {
+    val lexer = new Lexer("3*(2+1)")
+    val tokens = getTokens(lexer)
+    val exp = Vector(NumberToken(3), MULTIPLY, OPEN_PAREN, NumberToken(2), ADD, NumberToken(1), CLOSE_PAREN, EOF)
+    assert(tokens == exp)
+  }
+
   test("lexer should correctly distinguish between negation and subtraction")(pending)
 
   test("lexer should ignore whitespace")(pending)

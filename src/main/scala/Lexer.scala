@@ -41,12 +41,13 @@ class Lexer(val input: String) {
   }
 
   private def numberToken(c: Char): Token = {
-    val numBuilder = new StringBuilder(c.toString)
-    var char = nextChar
+    var char = Option(c)
+    val numBuilder = new StringBuilder
     while (char.isDefined && (char.get.isDigit || char.get == '.')) {
       numBuilder.append(char.get)
       char = nextChar
     }
+    cursor -= 1
     val number = numBuilder.toString.toDoubleOption
     number match {
       case Some(d) => NumberToken(d)
@@ -55,13 +56,13 @@ class Lexer(val input: String) {
   }
 
   private def letterToken(c: Char): Token = {
-    val value = new StringBuilder(c.toString)
-    var char = nextChar
+    var char = Option(c)
+    val value = new StringBuilder
     while (char.isDefined && char.get.isLetter) {
       value.append(char.get)
       char = nextChar
     }
-
+    cursor -= 1
     value.toString() match {
       case "sin" => SIN
       case "cos" => COS
