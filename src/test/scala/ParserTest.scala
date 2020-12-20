@@ -5,32 +5,32 @@ class ParserTest extends FunSuite {
   test("simple binary operations") {
     var expected = Option({
       val tree = Node(EmptyNode, ADD)
-      tree.left = Node(tree, NumberToken(2))
-      tree.right = Node(tree, NumberToken(3))
+      tree.left = Node(tree, Number(2))
+      tree.right = Node(tree, Number(3))
       tree
     })
     testAST("2 + 3", expected)
 
     expected = Option({
       val tree = Node(EmptyNode, SUBTRACT)
-      tree.left = Node(tree, NumberToken(2))
-      tree.right = Node(tree, NumberToken(3))
+      tree.left = Node(tree, Number(2))
+      tree.right = Node(tree, Number(3))
       tree
     })
     testAST("2 - 3", expected)
 
     expected = Option({
       val tree = Node(EmptyNode, MULTIPLY)
-      tree.left = Node(tree, NumberToken(2))
-      tree.right = Node(tree, NumberToken(3))
+      tree.left = Node(tree, Number(2))
+      tree.right = Node(tree, Number(3))
       tree
     })
     testAST("2 * 3", expected)
 
     expected = Option({
       val tree = Node(EmptyNode, DIVIDE)
-      tree.left = Node(tree, NumberToken(2))
-      tree.right = Node(tree, NumberToken(3))
+      tree.left = Node(tree, Number(2))
+      tree.right = Node(tree, Number(3))
       tree
     })
     testAST("2 / 3", expected)
@@ -39,9 +39,9 @@ class ParserTest extends FunSuite {
   test("subtract a negative number") {
     val expected = Option({
       val tree = Node(EmptyNode, SUBTRACT)
-      tree.setLeft(Node(tree, NumberToken(2)))
+      tree.setLeft(Node(tree, Number(2)))
       tree.setRight(Node(tree, NEGATION))
-      tree.right.setRight(Node(tree.right, NumberToken(3)))
+      tree.right.setRight(Node(tree.right, Number(3)))
       tree
     })
     testAST("2 - -3", expected)
@@ -50,10 +50,10 @@ class ParserTest extends FunSuite {
   test("simple parentheses") {
     val expected = Option({
       val tree = Node(EmptyNode, MULTIPLY)
-      tree.setLeft(Node(tree, NumberToken(3)))
+      tree.setLeft(Node(tree, Number(3)))
       tree.setRight(Node(tree, ADD))
-      tree.right.setLeft(Node(tree.right, NumberToken(2)))
-      tree.right.setRight(Node(tree.right, NumberToken(1)))
+      tree.right.setLeft(Node(tree.right, Number(2)))
+      tree.right.setRight(Node(tree.right, Number(1)))
       tree
     })
     testAST("3 * (2 + 1)", expected)
@@ -62,9 +62,9 @@ class ParserTest extends FunSuite {
   test("negative exponents") {
     val expected = Option({
       val tree = Node(EmptyNode, EXPONENT)
-      tree.setLeft(Node(tree, NumberToken(2)))
+      tree.setLeft(Node(tree, Number(2)))
       tree.setRight(Node(tree, NEGATION))
-      tree.right.setRight(Node(tree.right, NumberToken(3)))
+      tree.right.setRight(Node(tree.right, Number(3)))
       tree
     })
     testAST("2 ^ -3", expected)

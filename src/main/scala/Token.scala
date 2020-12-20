@@ -15,7 +15,7 @@ case object EOF extends Token {
   override val precedence: Int = Int.MinValue
 }
 
-case class NumberToken(value: Double) extends Token {
+case class Number(value: Double) extends Token {
   override val symbol: String = value.toString
   override val precedence: Int = Int.MaxValue
 }

@@ -34,7 +34,7 @@ class Lexer(val input: String) {
   }
 
   private def negOrSubToken: Token = previousToken match {
-    case Some(NumberToken(n)) => SUBTRACT
+    case Some(Number(n)) => SUBTRACT
     case Some(Variable(v)) => SUBTRACT
     case Some(CLOSE_PAREN) => SUBTRACT
     case _ => NEGATION
@@ -50,7 +50,7 @@ class Lexer(val input: String) {
     cursor -= 1
     val number = numBuilder.toString.toDoubleOption
     number match {
-      case Some(d) => NumberToken(d)
+      case Some(d) => Number(d)
       case None => InvalidToken('.')
     }
   }

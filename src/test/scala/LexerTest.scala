@@ -15,16 +15,16 @@ class LexerTest extends FunSuite {
 
   test("numbers") {
     var lexer = new Lexer("1")
-    assert(lexer.getNextToken == NumberToken(1))
+    assert(lexer.getNextToken == Number(1))
 
     lexer = new Lexer("0.3")
-    assert(lexer.getNextToken == NumberToken(0.3))
+    assert(lexer.getNextToken == Number(0.3))
 
     lexer = new Lexer("345")
-    assert(lexer.getNextToken == NumberToken(345))
+    assert(lexer.getNextToken == Number(345))
 
     lexer = new Lexer("9879.991")
-    assert(lexer.getNextToken == NumberToken(9879.991))
+    assert(lexer.getNextToken == Number(9879.991))
   }
 
   test("invalid numbers") {
@@ -62,13 +62,13 @@ class LexerTest extends FunSuite {
   test("parentheses expressions") {
     val lexer = new Lexer("3*(2+1)")
     val tokens = getTokens(lexer)
-    val exp = Vector(NumberToken(3), MULTIPLY, OPEN_PAREN, NumberToken(2), ADD, NumberToken(1), CLOSE_PAREN, EOF)
+    val exp = Vector(Number(3), MULTIPLY, OPEN_PAREN, Number(2), ADD, Number(1), CLOSE_PAREN, EOF)
     assert(tokens == exp)
   }
 
   test("ignore whitespace"){
     testLexer("3. 0   0 3  +  2       ^    5", Vector(
-      NumberToken(3.003), ADD, NumberToken(2), EXPONENT, NumberToken(5)
+      Number(3.003), ADD, Number(2), EXPONENT, Number(5)
     ))
   }
 
