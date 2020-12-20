@@ -3,7 +3,7 @@ import scala.collection.mutable.ArrayBuffer
 
 class LexerTest extends FunSuite {
 
-  test("lexer should only produce an EOF token on an empty input") {
+  test("empty input") {
     val lexer = new Lexer("")
     val tokens = getTokens(lexer)
     assert(tokens.length == 1)
@@ -13,7 +13,7 @@ class LexerTest extends FunSuite {
     }
   }
 
-  test("lexer should tokenize numbers") {
+  test("numbers") {
     var lexer = new Lexer("1")
     assert(lexer.getNextToken == NumberToken(1))
 
@@ -27,7 +27,7 @@ class LexerTest extends FunSuite {
     assert(lexer.getNextToken == NumberToken(9879.991))
   }
 
-  test("lexer should create invalid tokens invalid numbers") {
+  test("invalid numbers") {
     var lexer = new Lexer(".")
     assert(lexer.getNextToken == InvalidToken('.'))
 
@@ -38,7 +38,7 @@ class LexerTest extends FunSuite {
     assert(lexer.getNextToken == InvalidToken('.'))
   }
 
-  test("lexer should create tokens from binary operators") {
+  test("binary operators") {
     var lexer = new Lexer("+")
     assert(lexer.getNextToken == ADD)
 
@@ -66,9 +66,13 @@ class LexerTest extends FunSuite {
     assert(tokens == exp)
   }
 
-  test("lexer should correctly distinguish between negation and subtraction")(pending)
+  test("ignore whitespace"){
+    testLexer("3. 0   0 3  +  2       ^    5", Vector(
+      NumberToken(3.003), ADD, NumberToken(2), EXPONENT, NumberToken(5)
+    ))
+  }
 
-  test("lexer should ignore whitespace")(pending)
+  test("lexer should correctly distinguish between negation and subtraction")(pending)
 
   test("lexer should tokenize variables")(pending)
 
@@ -77,6 +81,12 @@ class LexerTest extends FunSuite {
   test("lexer should tokenize complex expressions")(pending)
 
   test("lexer should create invalid tokens for invalid symbols")(pending)
+
+  def testLexer(input: String, expected: Vector[Token]): Unit = {
+    val lexer = new Lexer(input)
+    val tokens = getTokens(lexer)
+    assert(tokens == expected)
+  }
 
   // helper methods
   def getTokens(lexer: Lexer): Vector[Token] = {
