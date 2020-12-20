@@ -8,17 +8,17 @@ case object Parser {
     buildTree(lexer, currentNode)
   }
 
-  @tailrec private def buildTree(lexer: Lexer, node: ASTree): Option[ASTree] = {
+  @tailrec private def buildTree(lexer: Lexer, startNode: ASTree): Option[ASTree] = {
     val token = lexer.getNextToken
 
     token match {
-      case EOF => treeRoot(node)
+      case EOF => treeRoot(startNode)
       case InvalidToken(_) => None
       case _ =>
-        var currentNode = traverseCurrentUp(node, token)
+        var currentNode = traverseCurrentUp(startNode, token)
         currentNode = token match {
-          case CLOSE_PAREN => closeParens(node)
-          case _ => insertNewNode(node, token)
+          case CLOSE_PAREN => closeParens(currentNode)
+          case _ => insertNewNode(currentNode, token)
         }
         buildTree(lexer, currentNode)
     }

@@ -2,7 +2,7 @@ sealed trait Token {
   val symbol: String
   val precedence: Int
 
-  def isLessThan(other: Token): Boolean = precedence < other.precedence
+  def isLessThan(other: Token): Boolean = precedence <= other.precedence
 }
 
 case class InvalidToken(invalidChar: Char) extends Token {
@@ -26,7 +26,7 @@ case class Variable(value: String) extends Token {
 }
 
 trait RightAssociative extends Token {
-  override def isLessThan(other: Token): Boolean = precedence <= other.precedence
+  override def isLessThan(other: Token): Boolean = precedence < other.precedence
 }
 
 case object OPEN_PAREN extends Token {
