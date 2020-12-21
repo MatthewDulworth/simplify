@@ -29,13 +29,13 @@ class LexerTest extends FunSuite {
 
   test("invalid numbers") {
     var lexer = new Lexer(".")
-    assert(lexer.getNextToken == InvalidToken('.'))
+    assert(lexer.getNextToken == InvalidNumber("."))
 
     lexer = new Lexer("3.245.5")
-    assert(lexer.getNextToken == InvalidToken('.'))
+    assert(lexer.getNextToken == InvalidNumber("3.245.5"))
 
     lexer = new Lexer(".....0")
-    assert(lexer.getNextToken == InvalidToken('.'))
+    assert(lexer.getNextToken == InvalidNumber(".....0"))
   }
 
   test("binary operators") {
@@ -91,19 +91,19 @@ class LexerTest extends FunSuite {
     ))
   }
 
-  test("invalid tokens") {
+  test("invalid characters") {
     testLexer("$%}", Vector(
-      InvalidToken('$'), InvalidToken('%'), InvalidToken('}')
+      InvalidChar('$'), InvalidChar('%'), InvalidChar('}')
     ))
   }
 
+  // helper methods
   def testLexer(input: String, expected: Vector[Token]): Unit = {
     val lexer = new Lexer(input)
     val tokens = getTokens(lexer)
     assert(tokens == expected :+ EOF)
   }
 
-  // helper methods
   def getTokens(lexer: Lexer): Vector[Token] = {
     val buffer = new ArrayBuffer[Token]
     findTokens(lexer, buffer)

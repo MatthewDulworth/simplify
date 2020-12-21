@@ -13,7 +13,7 @@ case object Parser {
 
     token match {
       case EOF => treeRoot(startNode)
-      case InvalidToken(_) => None
+      case t: InvalidToken => None
       case _ =>
         var currentNode = traverseCurrentUp(startNode, token)
         currentNode = token match {

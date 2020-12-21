@@ -5,9 +5,16 @@ sealed trait Token {
   def isLessThan(other: Token): Boolean = precedence <= other.precedence
 }
 
-case class InvalidToken(invalidChar: Char) extends Token {
-  override val symbol: String = invalidChar.toString
+sealed trait InvalidToken extends Token {
   override val precedence: Int = Int.MinValue
+}
+
+case class InvalidNumber(invalidNum: String) extends InvalidToken {
+  override val symbol: String = invalidNum
+}
+
+case class InvalidChar(invalidChar: Char) extends InvalidToken {
+  override val symbol: String = invalidChar.toString
 }
 
 case object EOF extends Token {
