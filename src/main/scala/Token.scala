@@ -1,3 +1,7 @@
+
+/**
+ * Represents a single item in a mathematical expression.
+ */
 sealed trait Token {
   val symbol: String
   val precedence: Int
@@ -5,6 +9,9 @@ sealed trait Token {
   def isLessThan(other: Token): Boolean = precedence <= other.precedence
 }
 
+/**
+ * Represents the end of the expression.
+ */
 case object EOF extends Token {
   override val symbol: String = ""
   override val precedence: Int = Int.MinValue
@@ -26,7 +33,7 @@ case class Variable(value: String) extends Token {
 
 
 // -------------------------------------------------------
-// Numbers & Variables
+// Parentheses
 // -------------------------------------------------------
 
 case object OPEN_PAREN extends Token {
@@ -70,7 +77,7 @@ case object TAN extends Function {
 // -------------------------------------------------------
 
 /**
- * Informs
+ * Holds behavior for right associative operations.
  */
 trait RightAssociative extends Token {
   override def isLessThan(other: Token): Boolean = precedence < other.precedence
@@ -82,6 +89,9 @@ case object NEGATE extends RightAssociative {
   val operation: Double => Double = _ * -1
 }
 
+/**
+ * Holds the operation that binary operators use.
+ */
 sealed trait BinaryOperator extends Token {
   val operation: (Double, Double) => Double
 }
@@ -121,6 +131,9 @@ case object EXPONENT extends BinaryOperator with RightAssociative {
 // Invalid Tokens
 // -------------------------------------------------------
 
+/**
+ * Created by the lexer whenever some invalid number or character is encountered.
+ */
 sealed trait InvalidToken extends Token {
   override val precedence: Int = Int.MinValue
 }
