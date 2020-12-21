@@ -1,5 +1,6 @@
-class Lexer(val input: String) {
+class Lexer(val in: String) {
 
+  private val input = in.replaceAll("\\s", "")
   private var cursor = -1
   private var previousToken: Option[Token] = None
   private var currentToken: Token = _
@@ -29,13 +30,12 @@ class Lexer(val input: String) {
     case '-' => negOrSubToken
     case l if l.isLetter => letterToken(char)
     case d if d.isDigit || d == '.' => numberToken(char)
-    case w if w.isWhitespace => getNextToken
     case _ => InvalidToken(char)
   }
 
   private def negOrSubToken: Token = previousToken match {
-    case Some(Number(n)) => SUBTRACT
-    case Some(Variable(v)) => SUBTRACT
+    case Some(Number(_)) => SUBTRACT
+    case Some(Variable(_)) => SUBTRACT
     case Some(CLOSE_PAREN) => SUBTRACT
     case _ => NEGATION
   }
