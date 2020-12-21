@@ -74,26 +74,45 @@ class ParserTest extends FunSuite {
     testAST("2 ^ -3", expected)
   }
 
-  ignore("variables and numbers") {
+  test("variables and functions") {
     val expected = Option({
-      val tree = Node(EmptyNode, EXPONENT)
-      tree.setLeft(Node(tree, Number(2)))
-      tree.setRight(Node(tree, NEGATION))
-      tree.right.setRight(Node(tree.right, Number(3)))
+      val tree = Node(EmptyNode, ADD)
+      tree.setLeft(Node(tree, EXPONENT))
+      tree.left.setLeft(Node(tree.left, Number(2)))
+      tree.left.setRight(Node(tree.left, Variable("x")))
+      tree.setRight(Node(tree, TAN))
+      tree.right.setRight(Node(tree.right, Number(4.56)))
       tree
     })
-    testAST("2 ^ x ", expected)
+    testAST("2 ^ x + tan(4.56)", expected)
   }
 
-  ignore("complex expression") {
+  test("complex expression") {
     val expected = Option({
-      val tree = Node(EmptyNode, EXPONENT)
-      tree.setLeft(Node(tree, Number(2)))
-      tree.setRight(Node(tree, NEGATION))
-      tree.right.setRight(Node(tree.right, Number(3)))
+      val tree = Node(EmptyNode, ADD)
+
+      tree.setLeft(Node(tree, MULTIPLY))
+      tree.left.setLeft(Node(tree.left, Variable("ye")))
+      tree.left.setRight(Node(tree.left, Number(3)))
+
+      tree.setRight(Node(tree, DIVIDE))
+      tree.right.setLeft(Node(tree.right, EXPONENT))
+      tree.right.left.setLeft(Node(tree.right.left, Variable("x")))
+      tree.right.left.setRight(Node(tree.right.left, Number(55.34)))
+
+      tree.right.setRight(Node(tree.right, SIN))
+      val subTree = Node(tree.right.right, SUBTRACT)
+      subTree.setLeft(Node(subTree, ADD))
+      subTree.left.setLeft(Node(subTree.left, Number(3)))
+      subTree.left.setRight(Node(subTree.left, DIVIDE))
+      subTree.left.right.setLeft(Node(subTree.left.right, Number(4)))
+      subTree.left.right.setRight(Node(subTree.left.right, Number(5)))
+      subTree.setRight(Node(subTree, Number(2)))
+      tree.right.right.setRight(subTree)
+
       tree
     })
-    testAST("2 ^ x ", expected)
+    testAST("ye * 3 + x ^ 55.34 / sin(3 + 4 / 5 - 2)", expected)
   }
 
   // -------------------------------------------------------------
