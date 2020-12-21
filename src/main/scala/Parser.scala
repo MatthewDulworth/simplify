@@ -28,7 +28,7 @@ case object Parser {
   }
 
   private def traverseCurrentUp(startNode: ASTree, token: Token): ASTree = token match {
-    case OPEN_PAREN | NEGATION => startNode
+    case OPEN_PAREN | NEGATE => startNode
     case _ =>
       var currentNode = startNode
       while (currentNode.parent != EmptyNode && token.isLessThan(currentNode.token)) {
@@ -43,11 +43,11 @@ case object Parser {
       parent
     case EmptyNode =>
       node.right.asInstanceOf[Node].resetParent()
-      node
+      node.right
   }
 
   private def insertNewNode(currentNode: ASTree, token: Token): ASTree = token match {
-    case OPEN_PAREN | NEGATION => insert(token, currentNode, currentNode.right)
+    case OPEN_PAREN | NEGATE => insert(token, currentNode, currentNode.right)
     case token if token.isLessThan(currentNode.token) => insert(token, EmptyNode, currentNode)
     case _ => insert(token, currentNode, currentNode.right)
   }

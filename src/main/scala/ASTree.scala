@@ -11,6 +11,8 @@ sealed trait ASTree extends PrintableNode {
   def setRight(newLeft: ASTree): Unit = {}
 
   def deepEquals(other: ASTree): Boolean
+
+  override def toString: String = token.toString
 }
 
 case object EmptyNode extends ASTree {

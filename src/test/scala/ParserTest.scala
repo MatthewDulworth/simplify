@@ -44,7 +44,7 @@ class ParserTest extends FunSuite {
     val expected = Option({
       val tree = Node(EmptyNode, SUBTRACT)
       tree.setLeft(Node(tree, Number(2)))
-      tree.setRight(Node(tree, NEGATION))
+      tree.setRight(Node(tree, NEGATE))
       tree.right.setRight(Node(tree.right, Number(3)))
       tree
     })
@@ -67,7 +67,7 @@ class ParserTest extends FunSuite {
     val expected = Option({
       val tree = Node(EmptyNode, EXPONENT)
       tree.setLeft(Node(tree, Number(2)))
-      tree.setRight(Node(tree, NEGATION))
+      tree.setRight(Node(tree, NEGATE))
       tree.right.setRight(Node(tree.right, Number(3)))
       tree
     })
@@ -115,6 +115,55 @@ class ParserTest extends FunSuite {
     testAST("ye * 3 + x ^ 55.34 / sin(3 + 4 / 5 - 2)", expected)
   }
 
+  test("more negatives") {
+    val expected = Option({
+      val tree = Node(EmptyNode, MULTIPLY)
+      tree.setLeft(Node(tree, NEGATE))
+      tree.left.setRight(Node(tree.left, Variable("x")))
+
+      tree.setRight(Node(tree, NEGATE))
+      val subTree = Node(tree.right, EXPONENT)
+      subTree.setLeft(Node(subTree, Variable("x")))
+      subTree.setRight(Node(subTree, NEGATE))
+      subTree.right.setRight(Node(subTree.right, Variable("x")))
+      tree.right.setRight(subTree)
+      tree
+    })
+    testAST("-x * -x ^ -x", expected)
+  }
+
+  test("still more negatives") {
+    val expected = Option({
+      val tree = Node(EmptyNode, DIVIDE)
+
+      tree.setLeft(Node(tree, DIVIDE))
+      tree.left.setLeft(Node(tree, MULTIPLY))
+      tree.left.left.setLeft(Node(tree.left.left, NEGATE))
+      tree.left.left.left.setRight(Node(tree.left.left.left, Variable("x")))
+
+      tree.left.setRight(Node(tree.left, NEGATE))
+      var subTree = Node(tree.left.right, SUBTRACT)
+      subTree.setLeft(Node(subTree, Variable("x")))
+      subTree.setRight(Node(subTree, NEGATE))
+      subTree.right.setRight(Node(subTree.right, Variable("x")))
+      tree.left.right.setRight(subTree)
+
+      tree.left.left.setRight(Node(tree.left, NEGATE))
+      subTree = Node(tree.left.left.right, EXPONENT)
+      subTree.setLeft(Node(subTree, Variable("x")))
+      subTree.setRight(Node(subTree, NEGATE))
+      subTree.right.setRight(Node(subTree.right, Variable("x")))
+      tree.left.left.right.setRight(subTree)
+
+      tree.setRight(Node(tree, TAN))
+      tree.right.setRight(Node(tree.right, NEGATE))
+      tree.right.right.setRight(Node(tree.right.right, Variable("x")))
+
+      tree
+    })
+    testAST("(- x * - x ^ -x) / - (x - -x) / tan(-x)", expected)
+  }
+
   // -------------------------------------------------------------
   // Helper Methods
   // -------------------------------------------------------------
@@ -143,5 +192,4 @@ class ParserTest extends FunSuite {
 
     assert(testCondition)
   }
-
 }

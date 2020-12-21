@@ -1,10 +1,24 @@
-class Lexer(val in: String) {
 
-  private val input = in.replaceAll("\\s", "")
+/**
+ * Tokenizes strings representing mathematical expressions to make them ready for parsing by the Parser class.
+ *
+ * Ignores whitespace. Letters are treated as variables unless they match a support function name.
+ *
+ * @param expression The string to parse into tokens.
+ */
+class Lexer(val expression: String) {
+
+  private val input = expression.replaceAll("\\s", "")
   private var cursor = -1
   private var previousToken: Option[Token] = None
   private var currentToken: Token = _
 
+  /**
+   * Finds the next token in the input string. The last token returned will be EOF.
+   * Once one EOF is returned, all subsequent calls to getNExtToken will return EOF.
+   *
+   * @return The next token from the input.
+   */
   def getNextToken: Token = {
     val char = nextChar
     previousToken = Some(currentToken)
@@ -15,11 +29,18 @@ class Lexer(val in: String) {
     currentToken
   }
 
+  /**
+   * @return THe next char in th input string.
+   */
   private def nextChar: Option[Char] = {
     cursor += 1
     if (cursor < input.length) Some(input.charAt(cursor)) else None
   }
 
+  /**
+   * @param char The char to create a token from.
+   * @return Token created from the given character.
+   */
   private def tokenFromChar(char: Char): Token = char match {
     case '+' => ADD
     case '*' => MULTIPLY
@@ -33,11 +54,16 @@ class Lexer(val in: String) {
     case _ => InvalidChar(char)
   }
 
+  /**
+   * Determines if the current '-' char represents subtraction or negation, returns the appropriate token.
+   *
+   * @return SUBTRACT or NEGATE.
+   */
   private def negOrSubToken: Token = previousToken match {
     case Some(Number(_)) => SUBTRACT
     case Some(Variable(_)) => SUBTRACT
     case Some(CLOSE_PAREN) => SUBTRACT
-    case _ => NEGATION
+    case _ => NEGATE
   }
 
   private def numberToken(c: Char): Token = {

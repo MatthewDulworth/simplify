@@ -74,7 +74,7 @@ class LexerTest extends FunSuite {
 
   test("negation vs subtraction") {
     testLexer("(-2) - -3", Vector(
-      OPEN_PAREN, NEGATION, Number(2), CLOSE_PAREN, SUBTRACT, NEGATION, Number(3)
+      OPEN_PAREN, NEGATE, Number(2), CLOSE_PAREN, SUBTRACT, NEGATE, Number(3)
     ))
   }
 
