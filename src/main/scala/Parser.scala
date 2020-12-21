@@ -5,7 +5,10 @@ case object Parser {
   def parse(input: String): Option[ASTree] = {
     val lexer = new Lexer(input)
     val currentNode = Node(EmptyNode, lexer.getNextToken)
-    buildTree(lexer, currentNode)
+    currentNode.token match {
+      case EOF => None
+      case _ => buildTree(lexer, currentNode)
+    }
   }
 
   @tailrec private def buildTree(lexer: Lexer, startNode: ASTree): Option[ASTree] = {

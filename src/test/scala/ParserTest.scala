@@ -2,6 +2,10 @@ import org.scalatest.FunSuite
 
 class ParserTest extends FunSuite {
 
+  test("empty input") {
+    testAST("", None)
+  }
+
   test("simple binary operations") {
     var expected = Option({
       val tree = Node(EmptyNode, ADD)
@@ -70,15 +74,36 @@ class ParserTest extends FunSuite {
     testAST("2 ^ -3", expected)
   }
 
+  ignore("variables and numbers") {
+    val expected = Option({
+      val tree = Node(EmptyNode, EXPONENT)
+      tree.setLeft(Node(tree, Number(2)))
+      tree.setRight(Node(tree, NEGATION))
+      tree.right.setRight(Node(tree.right, Number(3)))
+      tree
+    })
+    testAST("2 ^ x ", expected)
+  }
+
+  ignore("complex expression") {
+    val expected = Option({
+      val tree = Node(EmptyNode, EXPONENT)
+      tree.setLeft(Node(tree, Number(2)))
+      tree.setRight(Node(tree, NEGATION))
+      tree.right.setRight(Node(tree.right, Number(3)))
+      tree
+    })
+    testAST("2 ^ x ", expected)
+  }
+
   // -------------------------------------------------------------
   // Helper Methods
   // -------------------------------------------------------------
   def equalASTs(e: Option[ASTree], a: Option[ASTree]): Boolean = (e, a) match {
-    case (_, None) => false
-    case (None, _) => false
+    case (Some(_), None) => false
+    case (None, Some(_)) => false
     case (None, None) => true
     case (e, a) => e.get.deepEquals(a.get)
-    case (_, _) => false
   }
 
   def printAST(t: Option[ASTree]): Unit = t match {
