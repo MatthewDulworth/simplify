@@ -66,26 +66,41 @@ class LexerTest extends FunSuite {
     assert(tokens == exp)
   }
 
-  test("ignore whitespace"){
+  test("ignore whitespace") {
     testLexer("3. 0   0 3  +  2       ^    5", Vector(
       Number(3.003), ADD, Number(2), EXPONENT, Number(5)
     ))
   }
 
-  test("lexer should correctly distinguish between negation and subtraction")(pending)
+  test("negation vs subtraction") {
+    testLexer("(-2) - -3", Vector(
+      OPEN_PAREN, NEGATION, Number(2), CLOSE_PAREN, SUBTRACT, NEGATION, Number(3)
+    ))
+  }
 
-  test("lexer should tokenize variables")(pending)
+  test("variables vs functions") {
+    testLexer("cos(3) + x / y", Vector(
+      COS, OPEN_PAREN, Number(3), CLOSE_PAREN, ADD, Variable("x"), DIVIDE, Variable("y")
+    ))
+  }
 
-  test("lexer should tokenize functions")(pending)
+  test("complex expression") {
+    testLexer("2 + (3 ^ 4) / cos(20 * x^y) + 2", Vector(
+      Number(2), ADD, OPEN_PAREN, Number(3), EXPONENT, Number(4), CLOSE_PAREN, DIVIDE, COS, OPEN_PAREN,
+      Number(20), MULTIPLY, Variable("x"), EXPONENT, Variable("y"), CLOSE_PAREN, ADD, Number(2)
+    ))
+  }
 
-  test("lexer should tokenize complex expressions")(pending)
-
-  test("lexer should create invalid tokens for invalid symbols")(pending)
+  test("invalid tokens") {
+    testLexer("$%}", Vector(
+      InvalidToken('$'), InvalidToken('%'), InvalidToken('}')
+    ))
+  }
 
   def testLexer(input: String, expected: Vector[Token]): Unit = {
     val lexer = new Lexer(input)
     val tokens = getTokens(lexer)
-    assert(tokens == expected)
+    assert(tokens == expected :+ EOF)
   }
 
   // helper methods
