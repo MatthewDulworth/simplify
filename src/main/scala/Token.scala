@@ -6,7 +6,7 @@ sealed trait Token {
   val symbol: String
   val precedence: Int
 
-  def isLessThan(other: Token): Boolean = precedence <= other.precedence
+  def hasLowerPrecedence(other: Token): Boolean = precedence <= other.precedence
 }
 
 /**
@@ -80,7 +80,7 @@ case object TAN extends Function {
  * overrides isLessThan for right associative operators
  */
 trait RightAssociative extends Token {
-  override def isLessThan(other: Token): Boolean = precedence < other.precedence
+  override def hasLowerPrecedence(other: Token): Boolean = precedence < other.precedence
 }
 
 case object NEGATE extends RightAssociative {
