@@ -77,7 +77,7 @@ case object TAN extends Function {
 // -------------------------------------------------------
 
 /**
- * Holds behavior for right associative operations.
+ * overrides isLessThan for right associative operators
  */
 trait RightAssociative extends Token {
   override def isLessThan(other: Token): Boolean = precedence < other.precedence
