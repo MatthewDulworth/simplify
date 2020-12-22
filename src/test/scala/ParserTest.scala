@@ -87,7 +87,30 @@ class ParserTest extends FunSuite {
     testAST("2 ^ x + tan(4.56)", expected)
   }
 
-  test("complex expression") {
+  test("complex expression 1") {
+    val expected = Option {
+      val tree = Node(EmptyNode, DIVIDE)
+
+      tree.setLeft(Node(tree, DIVIDE))
+      var subtree = Node(tree.left, ADD)
+      subtree.setLeft(Node(subtree, Number(34567)))
+      subtree.setRight(Node(subtree, NEGATE))
+      subtree.right.setRight(Node(subtree.right, Number(2)))
+      tree.left.setLeft(subtree)
+
+      subtree = Node(tree.left, EXPONENT)
+      subtree.setLeft(Node(subtree, Number(10)))
+      subtree.setRight(Node(subtree, NEGATE))
+      subtree.right.setRight(Node(subtree.right, Number(1)))
+      tree.left.setRight(subtree)
+
+      tree.setRight(Node(tree, Number(42)))
+      tree
+    }
+    testAST("(34567 + -2) / 10 ^ -1 / 42", expected)
+  }
+
+  test("complex expression 2") {
     val expected = Option({
       val tree = Node(EmptyNode, ADD)
 

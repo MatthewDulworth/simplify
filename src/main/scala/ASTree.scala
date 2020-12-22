@@ -61,12 +61,12 @@ case class Node(var parent: ASTree, token: Token) extends ASTree {
   // debug methods
   override def getLeft: PrintableNode = left match {
     case EmptyNode => null
-    case Node(_, _) => left
+    case n: Node => left
   }
 
   override def getRight: PrintableNode = right match {
     case EmptyNode => null
-    case Node(_, _) => right
+    case n: Node => right
   }
 
   override def getText: String = token.symbol
@@ -76,3 +76,5 @@ case class Node(var parent: ASTree, token: Token) extends ASTree {
     case _ => false
   }
 }
+
+class Root extends Node(EmptyNode, EOF);

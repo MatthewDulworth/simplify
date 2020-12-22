@@ -13,10 +13,11 @@ case object Parser {
    */
   def parse(expression: String): Option[ASTree] = {
     val lexer = new Lexer(expression)
-    val currentNode = Node(EmptyNode, lexer.getNextToken)
-    currentNode.token match {
+    val root = new Root
+    root.setRight(Node(EmptyNode, lexer.getNextToken))
+    root.right.token match {
       case EOF => None
-      case _ => buildTree(lexer, currentNode)
+      case _ => buildTree(lexer, root.right)
     }
   }
 
@@ -54,7 +55,7 @@ case object Parser {
     case OPEN_PAREN | NEGATE => startNode
     case _ =>
       var currentNode = startNode
-      while (currentNode.parent != EmptyNode && token.isLessThan(currentNode.token)) {
+      while (token.hasLowerPrecedence(currentNode.token)) {
         currentNode = currentNode.parent
       }
       currentNode
@@ -71,9 +72,7 @@ case object Parser {
     case parent: Node =>
       parent.setRight(openParenNode.right)
       parent
-    case EmptyNode =>
-      openParenNode.right.asInstanceOf[Node].resetParent()
-      openParenNode.right
+    case _ => ???
   }
 
   /**
@@ -85,7 +84,6 @@ case object Parser {
    */
   private def insertToken(currentNode: ASTree, token: Token): ASTree = token match {
     case OPEN_PAREN | NEGATE => insert(token, currentNode, currentNode.right)
-    case token if token.isLessThan(currentNode.token) => insert(token, EmptyNode, currentNode)
     case _ => insert(token, currentNode, currentNode.right)
   }
 
@@ -113,9 +111,10 @@ case object Parser {
    */
   private def treeRoot(startNode: ASTree): Option[ASTree] = {
     var node = startNode
-    while (node.parent != EmptyNode) {
+    while (!node.parent.isInstanceOf[Root]) {
       node = node.parent
     }
+    node.parent = EmptyNode
     Some(node)
   }
 }
