@@ -66,23 +66,39 @@ class Lexer(val expression: String) {
     case _ => NEGATE
   }
 
-  private def numberToken(c: Char): Token = {
-    var char = Option(c)
+  /**
+   * Given an initial digit/decimal point of a number in the input, eats the subsequent digits
+   * (or decimal points) of the number and returns a number token if the number is valid. Returns
+   * an Invalid number if the number has too many/only consists of a decimal point.
+   *
+   * @param firstDigit The first digit (or decimal point) of the number.
+   * @return A Number if the number format is valid, otherwise an InvalidNumber.
+   */
+  private def numberToken(firstDigit: Char): Token = {
+    var char = Option(firstDigit)
     val numBuilder = new StringBuilder
     while (char.isDefined && (char.get.isDigit || char.get == '.')) {
       numBuilder.append(char.get)
       char = nextChar
     }
     cursor -= 1
-    val number = numBuilder.toString.toDoubleOption
-    number match {
-      case Some(d) => Number(d)
+    val numOption = numBuilder.toString.toDoubleOption
+    numOption match {
+      case Some(decimal) => Number(decimal)
       case None => InvalidNumber(numBuilder.toString)
     }
   }
 
-  private def letterToken(c: Char): Token = {
-    var char = Option(c)
+  /**
+   * Given the first letter of a function/variable name in the input eats the character
+   * and all subsequent letters until it hits a non-letter character, then returns a function
+   * token if one matches the name, otherwise returns a variable token.
+   *
+   * @param firstLetter The first letter of the function/variable name.
+   * @return A function or variable token.
+   */
+  private def letterToken(firstLetter: Char): Token = {
+    var char = Option(firstLetter)
     val value = new StringBuilder
     while (char.isDefined && char.get.isLetter) {
       value.append(char.get)
