@@ -187,6 +187,12 @@ class ParserTest extends FunSuite {
     testAST("(- x * - x ^ -x) / - (x - -x) / tan(-x)", expected)
   }
 
+  test("toString") {
+    val in = "sin(4 ^- 5) / 234.3 * 2 - 2"
+    val exp = "(((sin((4.0^(-5.0)))/234.3)*2.0)-2.0)"
+    assert(Parser.parse(in).get.toString == exp)
+  }
+
   // -------------------------------------------------------------
   // Helper Methods
   // -------------------------------------------------------------

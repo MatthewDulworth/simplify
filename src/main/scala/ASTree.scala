@@ -11,8 +11,6 @@ sealed trait ASTree extends PrintableNode {
   def setRight(newLeft: ASTree): Unit = {}
 
   def deepEquals(other: ASTree): Boolean
-
-  override def toString: String = token.toString
 }
 
 case object EmptyNode extends ASTree {
@@ -31,6 +29,8 @@ case object EmptyNode extends ASTree {
     case EmptyNode => true
     case _ => false
   }
+
+  override def toString: String = ""
 }
 
 case class Node(var parent: ASTree, token: Token) extends ASTree {
@@ -56,6 +56,20 @@ case class Node(var parent: ASTree, token: Token) extends ASTree {
   private def setChildParent(child: ASTree): Unit = child match {
     case node: Node => node.parent = this
     case _ =>
+  }
+
+  override def toString: String = token match {
+    case Number(value) => value.toString
+    case Variable(name) => name
+    case ADD => "(" + left.toString + "+" + right.toString + ")"
+    case SUBTRACT => "(" + left.toString + "-" + right.toString + ")"
+    case MULTIPLY => "(" + left.toString + "*" + right.toString + ")"
+    case DIVIDE => "(" + left.toString + "/" + right.toString + ")"
+    case EXPONENT => "(" + left.toString + "^" + right.toString + ")"
+    case NEGATE => "(-" + right.toString + ")"
+    case SIN => "sin(" + right.toString + ")"
+    case COS => "cos(" + right.toString + ")"
+    case TAN => "tan(" + right.toString + ")"
   }
 
   // debug methods
