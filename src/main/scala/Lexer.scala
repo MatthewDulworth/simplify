@@ -18,7 +18,7 @@ class Lexer(val expression: String) {
    *
    * @return The next token from the input.
    */
-  def getNextToken: Token = {
+  def nextToken: Token = {
     val char = nextChar
     previousToken = Some(currentToken)
     currentToken = char match {

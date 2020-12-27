@@ -120,7 +120,7 @@ class LexerTest extends FunSuite {
   }
 
   def getTokens(lexer: Lexer, list: List[Token] = Nil): List[Token] = {
-    val token = lexer.getNextToken
+    val token = lexer.nextToken
     val result = token :: list
     if (token != END) getTokens(lexer, result) else result
   }

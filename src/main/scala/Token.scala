@@ -4,6 +4,8 @@
 sealed trait Token {
   val precedence: Int
   val symbol: String
+
+  def hasHigherPrecedence(other: Token): Boolean = this.precedence >= other.precedence
 }
 
 case object END extends Token {
@@ -105,7 +107,9 @@ sealed trait BinaryOperator extends Operator
 
 sealed trait LeftAssoc extends BinaryOperator
 
-sealed trait RightAssoc extends BinaryOperator
+sealed trait RightAssoc extends BinaryOperator {
+  override def hasHigherPrecedence(other: Token): Boolean = this.precedence > other.precedence
+}
 
 case object ADD extends LeftAssoc {
   override val precedence: Int = 5
