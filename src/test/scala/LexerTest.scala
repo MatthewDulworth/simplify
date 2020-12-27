@@ -6,6 +6,14 @@ class LexerTest extends FunSuite {
     testLexer("", Nil)
   }
 
+  test("whitespace") {
+    testLexer("         \r  \r ", Nil)
+  }
+
+  // ------------------------------------------------------------
+  // Numbers
+  // ------------------------------------------------------------
+
   test("decimal numbers") {
     testLexer("3.04420", Decimal(3.04420) :: Nil)
     testLexer(".0", Decimal(0) :: Nil)
@@ -31,19 +39,44 @@ class LexerTest extends FunSuite {
     )
   }
 
-  test("binary operators")(pending)
+  // ------------------------------------------------------------
+  // Operators
+  // ------------------------------------------------------------
 
-  test("parentheses")(pending)
+  test("binary operators") {
+    testLexer("e + e", E :: ADD :: E :: Nil)
+    testLexer("e * e", E :: MULTIPLY :: E :: Nil)
+    testLexer("e / e", E :: DIVIDE :: E :: Nil)
+    testLexer("e ^ e", E :: POWER :: E :: Nil)
+  }
 
-  test("parentheses expressions")(pending)
+  // ------------------------------------------------------------
+  // Functions
+  // ------------------------------------------------------------
 
-  test("ignore whitespace")(pending)
+  test("parentheses") {
+    testLexer("()", OPEN_PAREN :: CLOSE_PAREN :: Nil)
+    testLexer("(e  )", OPEN_PAREN :: E :: CLOSE_PAREN :: Nil)
+  }
+
+  test("functions") {
+    testLexer("sin(e)", SIN :: OPEN_PAREN :: E :: CLOSE_PAREN :: Nil)
+    testLexer("cos(e)", COS :: OPEN_PAREN :: E :: CLOSE_PAREN :: Nil)
+    testLexer("tan(e)", TAN :: OPEN_PAREN :: E :: CLOSE_PAREN :: Nil)
+    testLexer("sqrt(e)", SQRT :: OPEN_PAREN :: E :: CLOSE_PAREN :: Nil)
+    testLexer("log(e)", LOG :: OPEN_PAREN :: E :: CLOSE_PAREN :: Nil)
+    testLexer("ln(e)", LN :: OPEN_PAREN :: E :: CLOSE_PAREN :: Nil)
+  }
 
   test("negation vs subtraction")(pending)
 
-  test("variables vs functions")(pending)
+  test("parentheses expressions")(pending)
 
   test("complex expression")(pending)
+
+  // ------------------------------------------------------------
+  // Helper Methods
+  // ------------------------------------------------------------
 
   def testLexer(in: String, exp: List[Token]): Unit = {
     val tokens = getTokens(new Lexer(in)).reverse
