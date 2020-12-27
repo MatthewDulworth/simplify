@@ -50,6 +50,20 @@ class LexerTest extends FunSuite {
     testLexer("e ^ e", E :: POWER :: E :: Nil)
   }
 
+  test("subtraction") {
+    testLexer("e - 3.2", E :: SUBTRACT :: Decimal(3.2) :: Nil)
+    testLexer(") - e", CLOSE_PAREN :: SUBTRACT :: E :: Nil)
+    testLexer("x - e", Variable("x") :: SUBTRACT :: E :: Nil)
+    testLexer("3 - e", Decimal(3) :: SUBTRACT :: E :: Nil)
+  }
+
+  test("negation") {
+    testLexer("-e", NEGATE :: E :: Nil)
+    testLexer("* - e", MULTIPLY :: NEGATE :: E :: Nil)
+    testLexer("sin - e", SIN :: NEGATE :: E :: Nil)
+    testLexer("( - e", OPEN_PAREN :: NEGATE :: E :: Nil)
+  }
+
   // ------------------------------------------------------------
   // Functions
   // ------------------------------------------------------------
