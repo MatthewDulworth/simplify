@@ -24,7 +24,7 @@ class Lexer(val expression: String) {
     previousToken = Some(currentToken)
     currentToken = char match {
       case Some(c) => tokenFromChar(c)
-      case None => EOF
+      case None => END
     }
     currentToken
   }
@@ -45,7 +45,7 @@ class Lexer(val expression: String) {
     case '+' => ADD
     case '*' => MULTIPLY
     case '/' => DIVIDE
-    case '^' => EXPONENT
+    case '^' => POWER
     case '(' => OPEN_PAREN
     case ')' => CLOSE_PAREN
     case '-' => negOrSubToken
@@ -60,8 +60,7 @@ class Lexer(val expression: String) {
    * @return SUBTRACT or NEGATE.
    */
   private def negOrSubToken: Token = previousToken match {
-    case Some(Number(_)) => SUBTRACT
-    case Some(Variable(_)) => SUBTRACT
+    case Some(Number) => SUBTRACT
     case Some(CLOSE_PAREN) => SUBTRACT
     case _ => NEGATE
   }
@@ -84,13 +83,13 @@ class Lexer(val expression: String) {
     cursor -= 1
     val numOption = numBuilder.toString.toDoubleOption
     numOption match {
-      case Some(decimal) => Number(decimal)
+      case Some(decimal) => Decimal(decimal)
       case None => InvalidNumber(numBuilder.toString)
     }
   }
 
   /**
-   * Given the first letter of a function/variable name in the input eats the character
+   * Given the first letter of a function/variable name/named constant in the input eats the character
    * and all subsequent letters until it hits a non-letter character, then returns a function
    * token if one matches the name, otherwise returns a variable token.
    *
@@ -106,9 +105,14 @@ class Lexer(val expression: String) {
     }
     cursor -= 1
     value.toString() match {
+      case "sqrt" => SQRT
       case "sin" => SIN
       case "cos" => COS
       case "tan" => TAN
+      case "log" => LOG
+      case "ln" => LN
+      case "pi" => PI
+      case "e" => E
       case _ => Variable(value.toString())
     }
   }
