@@ -1,147 +1,133 @@
-
-/**
- * Represents a single item in a mathematical expression.
- */
+// ------------------------------------------------------------
+// Tokens
+// ------------------------------------------------------------
 sealed trait Token {
-  val symbol: String
   val precedence: Int
-
-  def hasLowerPrecedence(other: Token): Boolean = precedence <= other.precedence
+  val symbol: String
 }
 
-/**
- * Represents the end of the expression.
- */
-case object EOF extends Token {
-  override val symbol: String = ""
-  override val precedence: Int = Int.MinValue
+case object END extends Token {
+  override val precedence: Int = -1
+  override val symbol: String = "end"
 }
 
-// -------------------------------------------------------
-// Numbers & Variables
-// -------------------------------------------------------
-
-case class Number(value: Double) extends Token {
-  override val symbol: String = value.toString
-  override val precedence: Int = Int.MaxValue
-}
-
-case class Variable(value: String) extends Token {
-  override val symbol: String = value
-  override val precedence: Int = Int.MaxValue
-}
-
-
-// -------------------------------------------------------
-// Parentheses
-// -------------------------------------------------------
-
-case object OPEN_PAREN extends Token {
-  override val symbol = "("
-  override val precedence = 1
-}
-
-case object CLOSE_PAREN extends RightAssociative {
-  override val symbol = ")"
-  override val precedence = 1
-}
-
-
-// -------------------------------------------------------
-// Functions
-// -------------------------------------------------------
-
-sealed trait Function extends Token {
-  override val precedence: Int = Int.MaxValue
-  val operation: Double => Double
-}
-
-case object SIN extends Function {
-  override val symbol: String = "sin"
-  val operation: Double => Double = Math.sin
-}
-
-case object COS extends Function {
-  override val symbol: String = "cos"
-  val operation: Double => Double = Math.cos
-}
-
-case object TAN extends Function {
-  override val symbol: String = "tan"
-  val operation: Double => Double = Math.tan
-}
-
-
-// -------------------------------------------------------
-// Operators
-// -------------------------------------------------------
-
-/**
- * overrides isLessThan for right associative operators
- */
-trait RightAssociative extends Token {
-  override def hasLowerPrecedence(other: Token): Boolean = precedence < other.precedence
-}
-
-case object NEGATE extends RightAssociative {
-  override val symbol = "neg"
-  override val precedence = 4
-  val operation: Double => Double = _ * -1
-}
-
-/**
- * Holds the operation that binary operators use.
- */
-sealed trait BinaryOperator extends Token {
-  val operation: (Double, Double) => Double
-}
-
-case object ADD extends BinaryOperator {
-  override val symbol = "+"
-  override val precedence = 2
-  override val operation: (Double, Double) => Double = _ + _
-}
-
-case object SUBTRACT extends BinaryOperator {
-  override val symbol = "-"
-  override val precedence = 2
-  override val operation: (Double, Double) => Double = _ - _
-}
-
-case object MULTIPLY extends BinaryOperator {
-  override val symbol = "*"
-  override val precedence = 3
-  override val operation: (Double, Double) => Double = _ * _
-}
-
-case object DIVIDE extends BinaryOperator {
-  override val symbol = "/"
-  override val precedence = 3
-  override val operation: (Double, Double) => Double = _ / _
-}
-
-case object EXPONENT extends BinaryOperator with RightAssociative {
-  override val symbol = "^"
-  override val precedence = 5
-  override val operation: (Double, Double) => Double = Math.pow
-}
-
-
-// -------------------------------------------------------
-// Invalid Tokens
-// -------------------------------------------------------
-
-/**
- * Created by the lexer whenever some invalid number or character is encountered.
- */
 sealed trait InvalidToken extends Token {
-  override val precedence: Int = Int.MinValue
+  override val precedence: Int = -1
+  val message: String
 }
 
-case class InvalidNumber(invalidNum: String) extends InvalidToken {
-  override val symbol: String = invalidNum
+case class InvalidChar(char: Char) extends InvalidToken {
+  override val symbol: String = char.toString
+  override val message: String = s"Invalid character encountered: $symbol"
 }
 
-case class InvalidChar(invalidChar: Char) extends InvalidToken {
-  override val symbol: String = invalidChar.toString
+case class InvalidNumber(symbol: String) extends InvalidToken {
+  override val message: String = s"Invalid number encountered: $symbol"
+}
+
+// ------------------------------------------------------------
+// Parentheses
+// ------------------------------------------------------------
+case object OPEN_PAREN extends Token {
+  override val precedence: Int = 0
+  override val symbol: String = "("
+}
+
+case object CLOSE_PAREN extends Token {
+  override val precedence: Int = 0
+  override val symbol: String = ")"
+}
+
+// ------------------------------------------------------------
+// Numbers
+// ------------------------------------------------------------
+sealed trait Number extends Token {
+  override val precedence: Int = 0
+}
+
+case class Variable(symbol: String) extends Number
+
+sealed trait Constant extends Number
+
+case class Decimal(value: Double) extends Constant {
+  override val symbol: String = value.toString
+}
+
+case object PI extends Constant {
+  override val symbol: String = "pi"
+}
+
+case object E extends Constant {
+  override val symbol: String = "e"
+}
+
+// ------------------------------------------------------------
+// Unary Operators
+// ------------------------------------------------------------
+sealed trait Operator extends Token
+
+sealed trait UnaryOperator extends Operator {
+  override val precedence: Int = 15
+}
+
+case object NEGATE extends UnaryOperator {
+  override val symbol: String = "neg"
+}
+
+case object SIN extends UnaryOperator {
+  override val symbol: String = "sin"
+}
+
+case object COS extends UnaryOperator {
+  override val symbol: String = "cos"
+}
+
+case object TAN extends UnaryOperator {
+  override val symbol: String = "tan"
+}
+
+case object SQRT extends UnaryOperator {
+  override val symbol: String = "sqrt"
+}
+
+case object LOG extends UnaryOperator {
+  override val symbol: String = "log"
+}
+
+case object LN extends UnaryOperator {
+  override val symbol: String = "ln"
+}
+
+// ------------------------------------------------------------
+// Binary Operators
+// ------------------------------------------------------------
+sealed trait BinaryOperator extends Operator
+
+sealed trait LeftAssoc extends BinaryOperator
+
+sealed trait RightAssoc extends BinaryOperator
+
+case object ADD extends LeftAssoc {
+  override val precedence: Int = 5
+  override val symbol: String = "+"
+}
+
+case object SUBTRACT extends LeftAssoc {
+  override val precedence: Int = 5
+  override val symbol: String = "-"
+}
+
+case object MULTIPLY extends LeftAssoc {
+  override val precedence: Int = 10
+  override val symbol: String = "*"
+}
+
+case object DIVIDE extends LeftAssoc {
+  override val precedence: Int = 10
+  override val symbol: String = "/"
+}
+
+case object POWER extends RightAssoc {
+  override val precedence: Int = 20
+  override val symbol: String = "^"
 }

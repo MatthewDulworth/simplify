@@ -10,14 +10,7 @@ case object Simplifier {
    * @param node
    * @return
    */
-  def eval(node: ASTree): Double = node.token match {
-    case binOp: BinaryOperator => binOp.operation(eval(node.left), eval(node.right))
-    case func: Function => func.operation(eval(node.right))
-    case NEGATE => NEGATE.operation(eval(node.right))
-    case Number(x) => x
-    case Variable(_) => 1
-    case _ => 0
-  }
+  def eval(node: ASTree): Double = ???
 
 
   /**
@@ -37,48 +30,5 @@ case object Simplifier {
    * @param node
    * @return
    */
-  def simplify(node: ASTree): ASTree = node.token match {
-    case Number(_) => Node(EmptyNode, node.token)
-    case Variable(_) => Node(EmptyNode, node.token)
-    case NEGATE => negate(simplify(node.right))
-    case SIN => sin(simplify(node.right))
-    case COS => cos(simplify(node.right))
-    case TAN => tan(simplify(node.right))
-    case ADD => add(simplify(node.left), simplify(node.right))
-    case SUBTRACT => subtract(simplify(node.left), simplify(node.right))
-    case MULTIPLY => multiply(simplify(node.left), simplify(node.right))
-    case DIVIDE => divide(simplify(node.left), simplify(node.right))
-    case EXPONENT => multiply(simplify(node.left), simplify(node.right))
-    case _ => EmptyNode
-  }
-
-  def add(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
-    case (Number(a), Number(b)) => Node(EmptyNode, Number(a + b))
-    case (_, 0) => left
-    case (0, _) => right
-    case (_, _) => ???
-  }
-
-  def subtract(left: ASTree, right: ASTree): ASTree = ???
-
-  def multiply(left: ASTree, right: ASTree): ASTree = ???
-
-  def divide(left: ASTree, right: ASTree): ASTree = ???
-
-  def exponentiate(left: ASTree, right: ASTree): ASTree = ???
-
-  def negate(right: ASTree): ASTree = ???
-
-  def sin(right: ASTree): ASTree = ???
-
-  def cos(right: ASTree): ASTree = ???
-
-  def tan(right: ASTree): ASTree = ???
-
-  def tree(root: Token, left: Token, right: Token): ASTree = {
-    val node = Node(EmptyNode, root)
-    node.setLeft(Node(node, left))
-    node.setRight(Node(node, right))
-    node
-  }
+  def simplify(node: ASTree): ASTree = ???
 }
