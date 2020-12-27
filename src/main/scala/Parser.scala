@@ -38,7 +38,7 @@ case object Parser {
     def pushOpToExpr(): ShuntYard = {
       val operator = operators.head
       val right :: left :: _ = expressions
-      val expression = Node(operator, right, left)
+      val expression = Node(operator, left, right)
       ShuntYard(operators.tail, expression :: expressions.tail.tail)
     }
 

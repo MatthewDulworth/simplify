@@ -1,6 +1,12 @@
 import org.scalatest.FunSuite
 
 class ParserTest extends FunSuite {
+
+  test("test") {
+    val res = Parser.parse("3 / 4 + 2")
+    System.out.println(res)
+  }
+
   test("empty input")(pending)
 
   test("simple binary operations")(pending)
