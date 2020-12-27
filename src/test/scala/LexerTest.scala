@@ -2,6 +2,10 @@ import org.scalatest.FunSuite
 
 class LexerTest extends FunSuite {
 
+  // ------------------------------------------------------------
+  // Empty
+  // ------------------------------------------------------------
+
   test("empty input") {
     testLexer("", Nil)
   }
