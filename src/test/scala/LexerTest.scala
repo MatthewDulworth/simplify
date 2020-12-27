@@ -82,11 +82,28 @@ class LexerTest extends FunSuite {
     testLexer("ln(e)", LN :: OPEN_PAREN :: E :: CLOSE_PAREN :: Nil)
   }
 
-  test("negation vs subtraction")(pending)
+  // ------------------------------------------------------------
+  // Expressions
+  // ------------------------------------------------------------
 
-  test("parentheses expressions")(pending)
+  test("expression 1") {
+    testLexer("(3 * 2) + 5",
+      OPEN_PAREN :: Decimal(3) :: MULTIPLY :: Decimal(2) :: CLOSE_PAREN :: ADD :: Decimal(5) :: Nil
+    )
+  }
 
-  test("complex expression")(pending)
+  test("expression 2") {
+    testLexer("(e / sin(- pi))",
+      OPEN_PAREN :: E :: DIVIDE :: SIN :: OPEN_PAREN :: NEGATE :: PI :: CLOSE_PAREN :: CLOSE_PAREN :: Nil
+    )
+  }
+
+  test("expression 3") {
+    testLexer("(- e - - pi) ^ ln(pi - - e)",
+      OPEN_PAREN :: NEGATE :: E :: SUBTRACT :: NEGATE :: PI :: CLOSE_PAREN :: POWER :: LN :: OPEN_PAREN :: PI ::
+        SUBTRACT :: NEGATE :: E :: CLOSE_PAREN :: Nil
+    )
+  }
 
   // ------------------------------------------------------------
   // Helper Methods
