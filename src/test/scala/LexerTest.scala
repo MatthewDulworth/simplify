@@ -2,7 +2,10 @@ import org.scalatest.FunSuite
 
 class LexerTest extends FunSuite {
 
-  test("empty input")(pending)
+  test("empty input") {
+    val exp = List(END)
+    testLexer("", exp)
+  }
 
   test("numbers")(pending)
 
@@ -21,4 +24,15 @@ class LexerTest extends FunSuite {
   test("variables vs functions")(pending)
 
   test("complex expression")(pending)
+
+  def testLexer(in: String, exp: List[Token]): Unit = {
+    val tokens = getTokens(new Lexer(in)).reverse
+    assert(tokens == exp)
+  }
+
+  def getTokens(lexer: Lexer, list: List[Token] = Nil): List[Token] = {
+    val token = lexer.getNextToken
+    val result = token :: list
+    if (token != END) getTokens(lexer, result) else result
+  }
 }

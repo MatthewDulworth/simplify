@@ -1,4 +1,3 @@
-
 /**
  * Tokenizes strings representing mathematical expressions to make them ready for parsing by the Parser class.
  *
@@ -60,7 +59,7 @@ class Lexer(val expression: String) {
    * @return SUBTRACT or NEGATE.
    */
   private def negOrSubToken: Token = previousToken match {
-    case Some(Number) => SUBTRACT
+    case Some(t: Number) => SUBTRACT
     case Some(CLOSE_PAREN) => SUBTRACT
     case _ => NEGATE
   }
