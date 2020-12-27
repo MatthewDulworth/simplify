@@ -11,7 +11,5 @@ case object Parser {
    * @param expression The expression to parse.
    * @return An option containing the root of the ASTree if it can be generated.
    */
-  def parse(expression: String): Option[ASTree] = {
-
-  }
+  def parse(expression: String): Option[ASTree] = ???
 }
