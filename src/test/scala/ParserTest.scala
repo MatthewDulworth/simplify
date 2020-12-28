@@ -1,13 +1,10 @@
-import org.scalatest.FunSuite
+import org.scalatest.{FunSuite, Tag}
 
 class ParserTest extends FunSuite {
 
-  test("test") {
-    val res = Parser.parse("3 / 4 + 2")
-    System.out.println(res)
+  test("empty input") {
+    testParser("", None)
   }
-
-  test("empty input")(pending)
 
   test("simple binary operations")(pending)
 
@@ -28,4 +25,15 @@ class ParserTest extends FunSuite {
   test("still more negatives")(pending)
 
   test("toString")(pending)
+
+  def testParser(expression: String, expected: Option[String]): Unit = {
+    val actual = Parser.parse(expression)
+
+    (actual, expected) match {
+      case (None, None) =>
+      case (None, _) => assert(actual.toString == expected.get.toString)
+      case (_, None) => assert(actual.get.toString == expected.toString)
+      case _ => assert(actual.get.toString == expected.get)
+    }
+  }
 }
