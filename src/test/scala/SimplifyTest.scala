@@ -27,7 +27,7 @@ class SimplifyTest extends FunSuite {
   // ------------------------------------------------------------
 
   test("1 - 2") {
-    testSimp("1 - 2", "-1.0")
+    testSimp("1 - 2", "neg(1.0)")
   }
 
   test("pi - 0") {

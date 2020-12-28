@@ -166,7 +166,8 @@ case object SUBTRACT extends LeftAssoc {
   // 0 - x => neg(x)
   // x - x => 0
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
-    case (a: Decimal, b: Decimal) => Node(Decimal(a.value - b.value))
+    case (a: Decimal, b: Decimal) => val d = a.value - b.value
+      if (d < 0) Node(NEGATE, Node(Decimal(Math.abs(d)))) else Node(Decimal(d))
     case (expr, Decimal(0)) => Node(expr)
     case (Decimal(0), expr) => Node(NEGATE, Node(expr))
     case (l, r) if l == r => Node(Decimal(0))
