@@ -139,6 +139,26 @@ class SimplifyTest extends FunSuite {
   }
 
   // ------------------------------------------------------------
+  // Natural Log
+  // ------------------------------------------------------------
+
+  test("ln(1)") {
+    testSimp("ln(1)", "0.0")
+  }
+
+  test("ln(e)") {
+    testSimp("ln(e)", "1.0")
+  }
+
+  test("ln(e^x)") {
+    testSimp("ln(e^x)", "x")
+  }
+
+  test("ln(3 * x)") {
+    testSimp("ln(3 * x)", "ln((3.0*x))")
+  }
+
+  // ------------------------------------------------------------
   // Helpers
   // ------------------------------------------------------------
   def testSimp(expression: String, expected: String): Unit = {

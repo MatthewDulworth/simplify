@@ -121,6 +121,7 @@ case object LOG extends Function {
   override val symbol: String = "log"
 
   override def operation(left: ASTree): ASTree = left.token match {
+    case Decimal(a) => Node(Decimal(Math.log10(a)))
     case _ => Node(LOG, left)
   }
 }
@@ -128,7 +129,14 @@ case object LOG extends Function {
 case object LN extends Function {
   override val symbol: String = "ln"
 
+  // ln(1) = 0
+  // ln(e) = 1
+  // ln(e ^ x) = x
   override def operation(left: ASTree): ASTree = left.token match {
+    case Decimal(1) => Node(Decimal(0))
+    case E => Node(Decimal(1))
+    case POWER if left.left.token == E => left.right
+    case Decimal(a) => Node(Decimal(Math.log(a)))
     case _ => Node(LN, left)
   }
 }
