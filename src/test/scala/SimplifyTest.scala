@@ -19,7 +19,11 @@ class SimplifyTest extends FunSuite {
   }
 
   test("x + x") {
-    testSimp("x + x", "(x+x)")
+    testSimp("x + x", "(2.0*x)")
+  }
+
+  test("x + y") {
+    testSimp("x + y", "(x+y)")
   }
 
   // ------------------------------------------------------------

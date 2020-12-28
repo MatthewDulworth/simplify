@@ -150,10 +150,12 @@ case object ADD extends LeftAssoc {
 
   // x + 0 => x
   // 0 + x => x
+  // x + x => 2x
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
     case (a: Decimal, b: Decimal) => Node(Decimal(a.value + b.value))
     case (Decimal(0), expr) => Node(expr)
     case (expr, Decimal(0)) => Node(expr)
+    case (x, y) if x == y => Node(MULTIPLY, Node(Decimal(2)), Node(x))
     case (_, _) => Node(ADD, left, right)
   }
 }
