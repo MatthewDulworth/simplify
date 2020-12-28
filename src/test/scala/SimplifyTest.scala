@@ -179,6 +179,30 @@ class SimplifyTest extends FunSuite {
   }
 
   // ------------------------------------------------------------
+  // Square Root
+  // ------------------------------------------------------------
+
+  test("sqrt(x^2) => x") {
+    testSimp("sqrt(x^2)", "x")
+  }
+
+  test("sqrt(x^3) => sqrt(x^3)") {
+    testSimp("sqrt(x^3)", "sqrt((x^3.0))")
+  }
+
+  test("sqrt(x^4) => x^2") {
+    testSimp("sqrt(x^4)", "(x^2.0)")
+  }
+
+  test("sqrt(4) => 2") {
+    testSimp("sqrt(4)", "2.0")
+  }
+
+  test("sqrt(x * 35) => sqrt(x * 35)") {
+    testSimp("sqrt(x * 35)", "sqrt((x*35.0))")
+  }
+
+  // ------------------------------------------------------------
   // Helpers
   // ------------------------------------------------------------
   def testSimp(expression: String, expected: String): Unit = {

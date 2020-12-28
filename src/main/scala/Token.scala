@@ -114,7 +114,22 @@ case object TAN extends Function {
 case object SQRT extends Function {
   override val symbol: String = "sqrt"
 
-  override def operation(simplify: ASTree): ASTree = ???
+  // sqrt(x ^ y) = x ^ y -2  if y is a power of 2
+  override def operation(left: ASTree): ASTree = left.token match {
+    case POWER if isPowerOf2(left.right.token) => Node(POWER, left.left, newValOf(left.right)).simplify
+    case Decimal(a) => Node(Decimal(Math.sqrt(a)))
+    case _ => Node(SQRT, left)
+  }
+
+  private def newValOf(node: ASTree): ASTree = {
+    val value = node.token.asInstanceOf[Decimal].value
+    Node(DIVIDE, Node(Decimal(value)), Node(Decimal(2)))
+  }
+
+  private def isPowerOf2(token: Token): Boolean = token match {
+    case Decimal(a) if (a == math.floor(a) && a != 0) => (a.toInt & (a.toInt - 1)) == 0
+    case _ => false
+  }
 }
 
 case object LOG extends Function {
