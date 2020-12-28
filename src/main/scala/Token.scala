@@ -120,13 +120,17 @@ case object SQRT extends Function {
 case object LOG extends Function {
   override val symbol: String = "log"
 
-  override def operation(simplify: ASTree): ASTree = ???
+  override def operation(left: ASTree): ASTree = left.token match {
+    case _ => Node(LOG, left)
+  }
 }
 
 case object LN extends Function {
   override val symbol: String = "ln"
 
-  override def operation(simplify: ASTree): ASTree = ???
+  override def operation(left: ASTree): ASTree = left.token match {
+    case _ => Node(LN, left)
+  }
 }
 
 // ------------------------------------------------------------
@@ -220,11 +224,15 @@ case object POWER extends RightAssoc {
   // 1 ^ x => 1
   // x ^ 0 => 1
   // x ^ 1 => x
+  // e ^ ln(x) => x
+  // 10 ^ log(x) => x
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
     case (Decimal(0), _) => Node(Decimal(0))
     case (Decimal(1), _) => Node(Decimal(1))
     case (_, Decimal(0)) => Node(Decimal(1))
     case (_, Decimal(1)) => left
+    case (E, LN) => right.left
+    case (Decimal(10), LOG) => right.left
     case (Decimal(a), Decimal(b)) => Node(Decimal(Math.pow(a, b)))
     case (_, _) => Node(POWER, left, right)
   }

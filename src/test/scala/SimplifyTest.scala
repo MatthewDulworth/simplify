@@ -122,12 +122,20 @@ class SimplifyTest extends FunSuite {
     testSimp("x ^ 1", "x")
   }
 
-  test("x ^ x") {
-    testSimp("x ^ x", "(x^x)")
+  test("e ^ ln(x)") {
+    testSimp("e ^ ln(x)", "x")
+  }
+
+  test("10 ^ log(x)") {
+    testSimp("10 ^ log(x)", "x")
   }
 
   test("2 ^ 2") {
     testSimp("2 ^ 2", "4.0")
+  }
+
+  test("x ^ x") {
+    testSimp("x ^ x", "(x^x)")
   }
 
   // ------------------------------------------------------------
