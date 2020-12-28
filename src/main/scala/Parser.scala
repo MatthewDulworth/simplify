@@ -23,7 +23,7 @@ case object Parser {
     case OPEN_PAREN => ???
     case CLOSE_PAREN => ???
     case END => shuntRemaining(yard)
-    case token: InvalidToken => None
+    case _: InvalidToken => None
   }
 
   @tailrec private def shuntRemaining(yard: ShuntYard): Option[ASTree] = {

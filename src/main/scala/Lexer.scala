@@ -59,7 +59,7 @@ class Lexer(val expression: String) {
    * @return SUBTRACT or NEGATE.
    */
   private def negOrSubToken: Token = previousToken match {
-    case Some(t: Number) => SUBTRACT
+    case Some(_: Number) => SUBTRACT
     case Some(CLOSE_PAREN) => SUBTRACT
     case _ => NEGATE
   }
