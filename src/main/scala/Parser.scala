@@ -51,7 +51,7 @@ case object Parser {
     }
 
     @tailrec def pushOp(operator: Token, yard: ShuntYard = this): ShuntYard = {
-      if (operator.hasHigherPrecedence(yard.operators.head))
+      if (operator > yard.operators.head)
         ShuntYard(operator :: yard.operators, yard.expressions)
       else
         pushOp(operator, yard.pushOpToExpr())
