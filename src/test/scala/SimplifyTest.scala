@@ -47,6 +47,34 @@ class SimplifyTest extends FunSuite {
   }
 
   // ------------------------------------------------------------
+  // Multiplication
+  // ------------------------------------------------------------
+
+  test("1 * 2") {
+    testSimp("1 * 2", "2.0")
+  }
+
+  test("x * 0") {
+    testSimp("x * 0", "0.0")
+  }
+
+  test("0 * x") {
+    testSimp("0 * x", "0.0")
+  }
+
+  test("x * 1") {
+    testSimp("x * 1", "x")
+  }
+
+  test("1 * x") {
+    testSimp("1 * x", "x")
+  }
+
+  test("x * x") {
+    testSimp("x * x", "(x^2.0)")
+  }
+
+  // ------------------------------------------------------------
   // Helpers
   // ------------------------------------------------------------
   def testSimp(expression: String, expected: String): Unit = {

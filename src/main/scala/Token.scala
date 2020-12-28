@@ -178,7 +178,20 @@ case object MULTIPLY extends LeftAssoc {
   override val precedence: Int = 2
   override val symbol: String = "*"
 
-  override def operation(left: ASTree, right: ASTree): ASTree = ???
+  // 0 * x => 0
+  // x * 0 => 0
+  // x * 1 => x
+  // 1 * x => x
+  // x * x => x ^ 2
+  override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
+    case (a: Decimal, b: Decimal) => Node(Decimal(a.value * b.value))
+    case (_, Decimal(0)) => Node(Decimal(0))
+    case (Decimal(0), _) => Node(Decimal(0))
+    case (expr, Decimal(1)) => Node(expr)
+    case (Decimal(1), expr) => Node(expr)
+    case (l, r) if l == r => Node(POWER, left, Node(Decimal(2)))
+    case (_, _) => Node(MULTIPLY, left, right)
+  }
 }
 
 case object DIVIDE extends LeftAssoc {
