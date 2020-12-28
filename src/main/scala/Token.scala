@@ -120,7 +120,13 @@ case object SQRT extends Function {
 case object LOG extends Function {
   override val symbol: String = "log"
 
+  // log(1) = 0
+  // log(10) = 1
+  // log(10 ^ x) = x
   override def operation(left: ASTree): ASTree = left.token match {
+    case Decimal(1) => Node(Decimal(0))
+    case Decimal(10) => Node(Decimal(1))
+    case POWER if left.left.token == Decimal(10) => left.right
     case Decimal(a) => Node(Decimal(Math.log10(a)))
     case _ => Node(LOG, left)
   }
