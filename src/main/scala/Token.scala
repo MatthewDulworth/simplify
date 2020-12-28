@@ -46,7 +46,7 @@ case object CLOSE_PAREN extends Token {
 // Numbers
 // ------------------------------------------------------------
 sealed trait Number extends Token {
-  override val precedence: Int = 0
+  override val precedence: Int = 5
 }
 
 case class Variable(symbol: String) extends Number
@@ -70,35 +70,38 @@ case object E extends Constant {
 // ------------------------------------------------------------
 sealed trait Operator extends Token
 
-sealed trait UnaryOperator extends Operator {
-  override val precedence: Int = 3
-}
+sealed trait UnaryOperator extends Operator
 
 case object NEGATE extends UnaryOperator {
   override val symbol: String = "neg"
+  override val precedence: Int = 3
 }
 
-case object SIN extends UnaryOperator {
+sealed trait Function extends UnaryOperator {
+  override val precedence: Int = 4
+}
+
+case object SIN extends Function {
   override val symbol: String = "sin"
 }
 
-case object COS extends UnaryOperator {
+case object COS extends Function {
   override val symbol: String = "cos"
 }
 
-case object TAN extends UnaryOperator {
+case object TAN extends Function {
   override val symbol: String = "tan"
 }
 
-case object SQRT extends UnaryOperator {
+case object SQRT extends Function {
   override val symbol: String = "sqrt"
 }
 
-case object LOG extends UnaryOperator {
+case object LOG extends Function {
   override val symbol: String = "log"
 }
 
-case object LN extends UnaryOperator {
+case object LN extends Function {
   override val symbol: String = "ln"
 }
 

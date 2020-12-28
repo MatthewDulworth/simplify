@@ -78,6 +78,33 @@ class ParserTest extends FunSuite {
     testParser("a * (b + c)", Some("(a*(b+c))"))
   }
 
+  test("(a - b) ^ (c + d)") {
+    testParser("(a - b) ^ (c + d)", Some("((a-b)^(c+d))"))
+  }
+
+  // ------------------------------------------------------------
+  // Functions
+  // ------------------------------------------------------------
+
+  test("cos(a)") {
+    testParser("cos(a)", Some("cos(a)"))
+  }
+
+  test("log(a + b)") {
+    testParser("log(a + b)", Some("log((a+b))"))
+  }
+
+  test("ln(-4)") {
+    testParser("ln(-4)", Some("ln(neg(4.0))"))
+  }
+
+  test("a ^ sqrt(pi)") {
+    testParser("a ^ sqrt(pi)", Some("(a^sqrt(pi))"))
+  }
+
+  test("sqrt(pi) ^ a") {
+    testParser("sqrt(pi) ^ a", Some("(sqrt(pi)^a)"))
+  }
 
   def testParser(expression: String, expected: Option[String]): Unit = {
     val actual = Parser.parse(expression)
