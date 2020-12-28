@@ -33,6 +33,8 @@ case class InvalidNumber(symbol: String) extends InvalidToken {
 case object OPEN_PAREN extends Token {
   override val precedence: Int = 0
   override val symbol: String = "("
+
+  override def hasHigherPrecedence(other: Token): Boolean = true
 }
 
 case object CLOSE_PAREN extends Token {

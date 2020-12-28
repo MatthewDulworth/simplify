@@ -20,8 +20,8 @@ case object Parser {
   @tailrec private def shunt(lexer: Lexer, yard: ShuntYard = ShuntYard()): Option[ASTree] = lexer.nextToken match {
     case number: Number => shunt(lexer, yard.pushExpr(number))
     case operator: Operator => shunt(lexer, yard.pushOp(operator))
-    case OPEN_PAREN => ???
-    case CLOSE_PAREN => ???
+    case OPEN_PAREN => shunt(lexer, yard.pushOp(OPEN_PAREN))
+    case CLOSE_PAREN => shunt(lexer, yard.closeParens())
     case END => shuntRemaining(yard)
     case _: InvalidToken => None
   }
@@ -55,6 +55,13 @@ case object Parser {
         ShuntYard(operator :: yard.operators, yard.expressions)
       else
         pushOp(operator, yard.pushOpToExpr())
+    }
+
+    @tailrec def closeParens(yard: ShuntYard = this): ShuntYard = {
+      if (yard.operators.head == OPEN_PAREN)
+        ShuntYard(yard.operators.tail, yard.expressions)
+      else
+        closeParens(yard.pushOpToExpr())
     }
   }
 

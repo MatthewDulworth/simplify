@@ -62,6 +62,22 @@ class ParserTest extends FunSuite {
     testParser("x + y - z", Some("((x+y)-z)"))
   }
 
+  // ------------------------------------------------------------
+  // Parentheses
+  // ------------------------------------------------------------
+
+  test("(a)") {
+    testParser("(a)", Some("a"))
+  }
+
+  test("(a + b)") {
+    testParser("(a + b)", Some("(a+b)"))
+  }
+
+  test("a * (b + c)") {
+    testParser("a * (b + c)", Some("(a*(b+c))"))
+  }
+
 
   def testParser(expression: String, expected: Option[String]): Unit = {
     val actual = Parser.parse(expression)
