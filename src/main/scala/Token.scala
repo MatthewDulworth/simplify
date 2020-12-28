@@ -148,6 +148,8 @@ case object ADD extends LeftAssoc {
   override val precedence: Int = 1
   override val symbol: String = "+"
 
+  // x + 0 => x
+  // 0 + x => x
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
     case (a: Decimal, b: Decimal) => Node(Decimal(a.value + b.value))
     case (Decimal(0), expr) => Node(expr)
@@ -160,7 +162,16 @@ case object SUBTRACT extends LeftAssoc {
   override val precedence: Int = 1
   override val symbol: String = "-"
 
-  override def operation(left: ASTree, right: ASTree): ASTree = ???
+  // x - 0 => x
+  // 0 - x => neg(x)
+  // x - x => 0
+  override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
+    case (a: Decimal, b: Decimal) => Node(Decimal(a.value - b.value))
+    case (expr, Decimal(0)) => Node(expr)
+    case (Decimal(0), expr) => Node(NEGATE, Node(expr))
+    case (l, r) if l == r => Node(Decimal(0))
+    case (_, _) => Node(SUBTRACT, left, right)
+  }
 }
 
 case object MULTIPLY extends LeftAssoc {
