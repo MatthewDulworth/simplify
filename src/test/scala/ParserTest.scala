@@ -107,12 +107,25 @@ class ParserTest extends FunSuite {
   }
 
   // ------------------------------------------------------------
-  // Negatives
+  // Negatives & Exponents
   // ------------------------------------------------------------
 
   test("-a ^ -b") {
     testParser("-a ^ -b", Some("neg((a^neg(b)))"))
   }
+
+  test("x ^ y ^ z") {
+    testParser("x ^ y ^ z", Some("(x^(y^z))"))
+  }
+
+  test("x ^ y ^ z * pi") {
+    testParser("x ^ y ^ z * pi", Some("((x^(y^z))*pi)"))
+  }
+
+  test("-a ^ -b ^ -c") {
+    testParser("-a ^ -b ^ -c", Some("neg((a^neg((b^neg(c)))))"))
+  }
+
 
   def testParser(expression: String, expected: Option[String]): Unit = {
     val actual = Parser.parse(expression)
