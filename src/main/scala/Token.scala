@@ -152,10 +152,10 @@ case object ADD extends LeftAssoc {
   // 0 + x => x
   // x + x => 2x
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
-    case (a: Decimal, b: Decimal) => Node(Decimal(a.value + b.value))
     case (Decimal(0), expr) => Node(expr)
     case (expr, Decimal(0)) => Node(expr)
     case (x, y) if x == y => Node(MULTIPLY, Node(Decimal(2)), Node(x))
+    case (a: Decimal, b: Decimal) => Node(Decimal(a.value + b.value))
     case (_, _) => Node(ADD, left, right)
   }
 }
@@ -168,11 +168,11 @@ case object SUBTRACT extends LeftAssoc {
   // 0 - x => neg(x)
   // x - x => 0
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
-    case (a: Decimal, b: Decimal) => val d = a.value - b.value
-      if (d < 0) Node(NEGATE, Node(Decimal(Math.abs(d)))) else Node(Decimal(d))
     case (expr, Decimal(0)) => Node(expr)
     case (Decimal(0), expr) => Node(NEGATE, Node(expr))
     case (l, r) if l == r => Node(Decimal(0))
+    case (a: Decimal, b: Decimal) => val d = a.value - b.value
+      if (d < 0) Node(NEGATE, Node(Decimal(Math.abs(d)))) else Node(Decimal(d))
     case (_, _) => Node(SUBTRACT, left, right)
   }
 }
@@ -187,12 +187,12 @@ case object MULTIPLY extends LeftAssoc {
   // 1 * x => x
   // x * x => x ^ 2
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
-    case (a: Decimal, b: Decimal) => Node(Decimal(a.value * b.value))
     case (_, Decimal(0)) => Node(Decimal(0))
     case (Decimal(0), _) => Node(Decimal(0))
     case (expr, Decimal(1)) => Node(expr)
     case (Decimal(1), expr) => Node(expr)
     case (l, r) if l == r => Node(POWER, left, Node(Decimal(2)))
+    case (a: Decimal, b: Decimal) => Node(Decimal(a.value * b.value))
     case (_, _) => Node(MULTIPLY, left, right)
   }
 }
