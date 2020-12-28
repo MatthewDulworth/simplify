@@ -26,6 +26,10 @@ class ParserTest extends FunSuite {
     testParser("pi / 3", Some("(pi/3.0)"))
   }
 
+  test("simple power") {
+    testParser("2 ^ 3", Some("(2.0^3.0)"))
+  }
+
   test("simple negate") {
     testParser("-pi", Some("neg(pi)"))
   }
