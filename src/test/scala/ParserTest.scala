@@ -2,6 +2,10 @@ import org.scalatest.{FunSuite, Tag}
 
 class ParserTest extends FunSuite {
 
+  // ------------------------------------------------------------
+  // Binary Operators
+  // ------------------------------------------------------------
+
   test("empty input") {
     testParser("", None)
   }
@@ -9,6 +13,10 @@ class ParserTest extends FunSuite {
   test("single number") {
     testParser("e", Some("e"))
   }
+
+  // ------------------------------------------------------------
+  // Simple Operators
+  // ------------------------------------------------------------
 
   test("simple add") {
     testParser("3 + 4", Some("(3.0+4.0)"))
@@ -34,23 +42,26 @@ class ParserTest extends FunSuite {
     testParser("-pi", Some("neg(pi)"))
   }
 
-  test("subtract a negative number")(pending)
+  // ------------------------------------------------------------
+  // Simple Expressions
+  // ------------------------------------------------------------
 
-  test("simple parentheses")(pending)
+  test("x + y / z") {
+    testParser("x + y / z", Some("(x+(y/z))"))
+  }
 
-  test("negative exponents")(pending)
+  test("x / y + z") {
+    testParser("x / y + z", Some("((x/y)+z)"))
+  }
 
-  test("variables and functions")(pending)
+  test("x - y + z") {
+    testParser("x - y + z", Some("((x-y)+z)"))
+  }
 
-  test("complex expression 1")(pending)
+  test("x + y - z") {
+    testParser("x + y - z", Some("((x+y)-z)"))
+  }
 
-  test("complex expression 2")(pending)
-
-  test("more negatives")(pending)
-
-  test("still more negatives")(pending)
-
-  test("toString")(pending)
 
   def testParser(expression: String, expected: Option[String]): Unit = {
     val actual = Parser.parse(expression)

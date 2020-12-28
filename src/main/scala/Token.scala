@@ -5,7 +5,7 @@ sealed trait Token {
   val precedence: Int
   val symbol: String
 
-  def hasHigherPrecedence(other: Token): Boolean = this.precedence >= other.precedence
+  def hasHigherPrecedence(other: Token): Boolean = this.precedence > other.precedence
 }
 
 case object END extends Token {
@@ -69,7 +69,7 @@ case object E extends Constant {
 sealed trait Operator extends Token
 
 sealed trait UnaryOperator extends Operator {
-  override val precedence: Int = 15
+  override val precedence: Int = 3
 }
 
 case object NEGATE extends UnaryOperator {
@@ -107,31 +107,29 @@ sealed trait BinaryOperator extends Operator
 
 sealed trait LeftAssoc extends BinaryOperator
 
-sealed trait RightAssoc extends BinaryOperator {
-  override def hasHigherPrecedence(other: Token): Boolean = this.precedence > other.precedence
-}
+sealed trait RightAssoc extends BinaryOperator
 
 case object ADD extends LeftAssoc {
-  override val precedence: Int = 5
+  override val precedence: Int = 1
   override val symbol: String = "+"
 }
 
 case object SUBTRACT extends LeftAssoc {
-  override val precedence: Int = 5
+  override val precedence: Int = 1
   override val symbol: String = "-"
 }
 
 case object MULTIPLY extends LeftAssoc {
-  override val precedence: Int = 10
+  override val precedence: Int = 2
   override val symbol: String = "*"
 }
 
 case object DIVIDE extends LeftAssoc {
-  override val precedence: Int = 10
+  override val precedence: Int = 2
   override val symbol: String = "/"
 }
 
 case object POWER extends RightAssoc {
-  override val precedence: Int = 20
+  override val precedence: Int = 3
   override val symbol: String = "^"
 }
