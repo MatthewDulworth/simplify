@@ -14,6 +14,6 @@ case class Node(token: Token, left: ASTree = Empty, right: ASTree = Empty) exten
   override def toString: String = token match {
     case n: Number => n.symbol
     case b: BinaryOperator => "(" + left.toString + b.symbol + right.toString + ")"
-    case u: UnaryOperator => u.symbol + "(" + right.toString + ")"
+    case u: UnaryOperator => u.symbol + "(" + left.toString + ")"
   }
 }

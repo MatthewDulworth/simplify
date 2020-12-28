@@ -40,12 +40,17 @@ case object Parser {
     // pre: operators.size >= 1, expressions.size >= 2
     def pushOpToExpr(): ShuntYard = {
       val operator = operators.head
-      val right :: left :: _ = expressions
+
+      val (left, right, tail) = operator match {
+        case _: BinaryOperator => (expressions.tail.head, expressions.head, expressions.tail.tail)
+        case _: UnaryOperator => (expressions.head, Empty, expressions.tail)
+      }
+
       val expression = Node(operator, left, right)
-      ShuntYard(operators.tail, expression :: expressions.tail.tail)
+      ShuntYard(operators.tail, expression :: tail)
     }
 
-    @tailrec def pushOp(operator: Operator, yard: ShuntYard = this): ShuntYard = {
+    @tailrec def pushOp(operator: Token, yard: ShuntYard = this): ShuntYard = {
       if (operator.hasHigherPrecedence(yard.operators.head))
         ShuntYard(operator :: yard.operators, yard.expressions)
       else

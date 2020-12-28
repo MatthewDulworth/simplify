@@ -6,7 +6,29 @@ class ParserTest extends FunSuite {
     testParser("", None)
   }
 
-  test("simple binary operations")(pending)
+  test("single number") {
+    testParser("e", Some("e"))
+  }
+
+  test("simple add") {
+    testParser("3 + 4", Some("(3.0+4.0)"))
+  }
+
+  test("simple multiply") {
+    testParser("e * pi", Some("(e*pi)"))
+  }
+
+  test("simple subtract") {
+    testParser("e - 4", Some("(e-4.0)"))
+  }
+
+  test("simple divide") {
+    testParser("pi / 3", Some("(pi/3.0)"))
+  }
+
+  test("simple negate") {
+    testParser("-pi", Some("neg(pi)"))
+  }
 
   test("subtract a negative number")(pending)
 
