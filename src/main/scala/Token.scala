@@ -148,7 +148,12 @@ case object ADD extends LeftAssoc {
   override val precedence: Int = 1
   override val symbol: String = "+"
 
-  override def operation(left: ASTree, right: ASTree): ASTree = ???
+  override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
+    case (a: Decimal, b: Decimal) => Node(Decimal(a.value + b.value))
+    case (Decimal(0), expr) => Node(expr)
+    case (expr, Decimal(0)) => Node(expr)
+    case (_, _) => Node(ADD, left, right)
+  }
 }
 
 case object SUBTRACT extends LeftAssoc {
