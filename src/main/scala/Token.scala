@@ -51,17 +51,21 @@ sealed trait Number extends Token {
 
 case class Variable(symbol: String) extends Number
 
-sealed trait Constant extends Number
+sealed trait Constant extends Number {
+  val value: Double
+}
 
 case class Decimal(value: Double) extends Constant {
   override val symbol: String = value.toString
 }
 
 case object PI extends Constant {
+  override val value: Double = Math.PI
   override val symbol: String = "pi"
 }
 
 case object E extends Constant {
+  override val value: Double = Math.E
   override val symbol: String = "e"
 }
 
@@ -70,7 +74,9 @@ case object E extends Constant {
 // ------------------------------------------------------------
 sealed trait Operator extends Token
 
-sealed trait UnaryOperator extends Operator
+sealed trait UnaryOperator extends Operator {
+  def operation(simplify: ASTree): ASTree
+}
 
 case object NEGATE extends UnaryOperator {
   override val symbol: String = "neg"
@@ -79,6 +85,8 @@ case object NEGATE extends UnaryOperator {
   override def >(other: Token): Boolean = {
     this.precedence >= other.precedence
   }
+
+  override def operation(simplify: ASTree): ASTree = ???
 }
 
 sealed trait Function extends UnaryOperator {
@@ -87,32 +95,46 @@ sealed trait Function extends UnaryOperator {
 
 case object SIN extends Function {
   override val symbol: String = "sin"
+
+  override def operation(simplify: ASTree): ASTree = ???
 }
 
 case object COS extends Function {
   override val symbol: String = "cos"
+
+  override def operation(simplify: ASTree): ASTree = ???
 }
 
 case object TAN extends Function {
   override val symbol: String = "tan"
+
+  override def operation(simplify: ASTree): ASTree = ???
 }
 
 case object SQRT extends Function {
   override val symbol: String = "sqrt"
+
+  override def operation(simplify: ASTree): ASTree = ???
 }
 
 case object LOG extends Function {
   override val symbol: String = "log"
+
+  override def operation(simplify: ASTree): ASTree = ???
 }
 
 case object LN extends Function {
   override val symbol: String = "ln"
+
+  override def operation(simplify: ASTree): ASTree = ???
 }
 
 // ------------------------------------------------------------
 // Binary Operators
 // ------------------------------------------------------------
-sealed trait BinaryOperator extends Operator
+sealed trait BinaryOperator extends Operator {
+  def operation(left: ASTree, right: ASTree): ASTree
+}
 
 sealed trait LeftAssoc extends BinaryOperator
 
@@ -125,24 +147,34 @@ sealed trait RightAssoc extends BinaryOperator {
 case object ADD extends LeftAssoc {
   override val precedence: Int = 1
   override val symbol: String = "+"
+
+  override def operation(left: ASTree, right: ASTree): ASTree = ???
 }
 
 case object SUBTRACT extends LeftAssoc {
   override val precedence: Int = 1
   override val symbol: String = "-"
+
+  override def operation(left: ASTree, right: ASTree): ASTree = ???
 }
 
 case object MULTIPLY extends LeftAssoc {
   override val precedence: Int = 2
   override val symbol: String = "*"
+
+  override def operation(left: ASTree, right: ASTree): ASTree = ???
 }
 
 case object DIVIDE extends LeftAssoc {
   override val precedence: Int = 2
   override val symbol: String = "/"
+
+  override def operation(left: ASTree, right: ASTree): ASTree = ???
 }
 
 case object POWER extends RightAssoc {
   override val precedence: Int = 3
   override val symbol: String = "^"
+
+  override def operation(left: ASTree, right: ASTree): ASTree = ???
 }
