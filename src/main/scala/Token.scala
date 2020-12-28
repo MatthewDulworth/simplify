@@ -152,10 +152,10 @@ case object ADD extends LeftAssoc {
   // 0 + x => x
   // x + x => 2x
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
-    case (Decimal(0), x) => Node(x)
-    case (x, Decimal(0)) => Node(x)
+    case (Decimal(0), _) => right
+    case (_, Decimal(0)) => left
     case (Decimal(a), Decimal(b)) => Node(Decimal(a + b))
-    case (x, y) if x == y => Node(MULTIPLY, Node(Decimal(2)), Node(x))
+    case (x, y) if x == y => Node(MULTIPLY, Node(Decimal(2)), right)
     case (_, _) => Node(ADD, left, right)
   }
 }
@@ -168,8 +168,8 @@ case object SUBTRACT extends LeftAssoc {
   // 0 - x => neg(x)
   // x - x => 0
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
-    case (x, Decimal(0)) => Node(x)
-    case (Decimal(0), x) => Node(NEGATE, Node(x))
+    case (_, Decimal(0)) => left
+    case (Decimal(0), _) => Node(NEGATE, right)
     case (x, y) if x == y => Node(Decimal(0))
     case (Decimal(a), Decimal(b)) => if (b > a) Node(NEGATE, Node(Decimal(Math.abs(a - b)))) else Node(Decimal(a - b))
     case (_, _) => Node(SUBTRACT, left, right)
@@ -188,10 +188,10 @@ case object MULTIPLY extends LeftAssoc {
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
     case (_, Decimal(0)) => Node(Decimal(0))
     case (Decimal(0), _) => Node(Decimal(0))
-    case (x, Decimal(1)) => Node(x)
-    case (Decimal(1), x) => Node(x)
+    case (_, Decimal(1)) => left
+    case (Decimal(1), _) => right
     case (Decimal(a), Decimal(b)) => Node(Decimal(a * b))
-    case (x, y) if x == y => Node(POWER, Node(x), Node(Decimal(2)))
+    case (x, y) if x == y => Node(POWER, left, Node(Decimal(2)))
     case (_, _) => Node(MULTIPLY, left, right)
   }
 }
@@ -206,7 +206,7 @@ case object DIVIDE extends LeftAssoc {
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
     case (Decimal(0), _) => Node(Decimal(0))
     case (x, y) if x == y => Node(Decimal(1))
-    case (x, Decimal(1)) => Node(x)
+    case (_, Decimal(1)) => left
     case (Decimal(a), Decimal(b)) => Node(Decimal(a / b))
     case (_, _) => Node(DIVIDE, left, right)
   }
