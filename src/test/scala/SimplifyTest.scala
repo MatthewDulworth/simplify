@@ -6,16 +6,16 @@ class SimplifyTest extends FunSuite {
   // Addition
   // ------------------------------------------------------------
 
-  test("1 + 1") {
-    testSimp("1 + 1", "2.0")
-  }
-
   test("0 + e") {
     testSimp("e", "e")
   }
 
   test("pi + 0") {
     testSimp("pi", "pi")
+  }
+
+  test("1 + 1") {
+    testSimp("1 + 1", "2.0")
   }
 
   test("x + x") {
@@ -76,6 +76,26 @@ class SimplifyTest extends FunSuite {
 
   test("x * x") {
     testSimp("x * x", "(x^2.0)")
+  }
+
+  // ------------------------------------------------------------
+  // Division
+  // ------------------------------------------------------------
+
+  test("0 / x") {
+    testSimp("0 / x", "0.0")
+  }
+
+  test("x / x") {
+    testSimp("x / x", "1.0")
+  }
+
+  test("x / 1") {
+    testSimp("x / 1", "x")
+  }
+
+  test("x / 3") {
+    testSimp("x / 3", "(x/3.0)")
   }
 
   // ------------------------------------------------------------

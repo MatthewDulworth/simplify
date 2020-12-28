@@ -154,8 +154,8 @@ case object ADD extends LeftAssoc {
   override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
     case (Decimal(0), expr) => Node(expr)
     case (expr, Decimal(0)) => Node(expr)
-    case (x, y) if x == y => Node(MULTIPLY, Node(Decimal(2)), Node(x))
     case (a: Decimal, b: Decimal) => Node(Decimal(a.value + b.value))
+    case (x, y) if x == y => Node(MULTIPLY, Node(Decimal(2)), Node(x))
     case (_, _) => Node(ADD, left, right)
   }
 }
@@ -201,7 +201,16 @@ case object DIVIDE extends LeftAssoc {
   override val precedence: Int = 2
   override val symbol: String = "/"
 
-  override def operation(left: ASTree, right: ASTree): ASTree = ???
+  // 0 / x = 0
+  // x / x = 1
+  // x / 1 = x
+  override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
+    case (Decimal(0), _) => Node(Decimal(0))
+    case (x, y) if x == y => Node(Decimal(1))
+    case (x, Decimal(1)) => Node(x)
+    case (Decimal(a), Decimal(b)) => Node(Decimal(a / b))
+    case (_, _) => Node(DIVIDE, left, right)
+  }
 }
 
 case object POWER extends RightAssoc {
