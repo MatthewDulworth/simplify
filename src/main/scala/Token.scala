@@ -75,6 +75,10 @@ sealed trait UnaryOperator extends Operator
 case object NEGATE extends UnaryOperator {
   override val symbol: String = "neg"
   override val precedence: Int = 3
+
+  override def hasHigherPrecedence(other: Token): Boolean = {
+    this.precedence >= other.precedence
+  }
 }
 
 sealed trait Function extends UnaryOperator {
@@ -112,7 +116,11 @@ sealed trait BinaryOperator extends Operator
 
 sealed trait LeftAssoc extends BinaryOperator
 
-sealed trait RightAssoc extends BinaryOperator
+sealed trait RightAssoc extends BinaryOperator {
+  override def hasHigherPrecedence(other: Token): Boolean = {
+    this.precedence >= other.precedence
+  }
+}
 
 case object ADD extends LeftAssoc {
   override val precedence: Int = 1

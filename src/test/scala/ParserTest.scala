@@ -106,6 +106,14 @@ class ParserTest extends FunSuite {
     testParser("sqrt(pi) ^ a", Some("(sqrt(pi)^a)"))
   }
 
+  // ------------------------------------------------------------
+  // Negatives
+  // ------------------------------------------------------------
+
+  test("-a ^ -b") {
+    testParser("-a ^ -b", Some("neg((a^neg(b)))"))
+  }
+
   def testParser(expression: String, expected: Option[String]): Unit = {
     val actual = Parser.parse(expression)
 
