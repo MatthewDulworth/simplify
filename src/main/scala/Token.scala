@@ -216,5 +216,16 @@ case object POWER extends RightAssoc {
   override val precedence: Int = 3
   override val symbol: String = "^"
 
-  override def operation(left: ASTree, right: ASTree): ASTree = ???
+  // 0 ^ x => 0
+  // 1 ^ x => 1
+  // x ^ 0 => 1
+  // x ^ 1 => x
+  override def operation(left: ASTree, right: ASTree): ASTree = (left.token, right.token) match {
+    case (Decimal(0), _) => Node(Decimal(0))
+    case (Decimal(1), _) => Node(Decimal(1))
+    case (_, Decimal(0)) => Node(Decimal(1))
+    case (_, Decimal(1)) => left
+    case (Decimal(a), Decimal(b)) => Node(Decimal(Math.pow(a, b)))
+    case (_, _) => Node(POWER, left, right)
+  }
 }
