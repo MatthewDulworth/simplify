@@ -60,12 +60,12 @@ case class Decimal(value: Double) extends Constant {
 }
 
 case object PI extends Constant {
-  override val value: Double = Math.PI
+  override val value: Double = math.Pi
   override val symbol: String = "pi"
 }
 
 case object E extends Constant {
-  override val value: Double = Math.E
+  override val value: Double = math.E
   override val symbol: String = "e"
 }
 
@@ -96,19 +96,30 @@ sealed trait Function extends UnaryOperator {
 case object SIN extends Function {
   override val symbol: String = "sin"
 
-  override def operation(simplify: ASTree): ASTree = ???
+  override def operation(left: ASTree): ASTree = left.token match {
+    case PI => Node(Decimal(0))
+    case c: Constant => Node(Decimal(math.sin(c.value)))
+    case _ => Node(SIN, left)
+  }
 }
 
 case object COS extends Function {
   override val symbol: String = "cos"
 
-  override def operation(simplify: ASTree): ASTree = ???
+  override def operation(left: ASTree): ASTree = left.token match {
+    case Decimal(a) => Node(Decimal(math.cos(a)))
+    case _ => Node(COS, left)
+  }
 }
 
 case object TAN extends Function {
   override val symbol: String = "tan"
 
-  override def operation(simplify: ASTree): ASTree = ???
+  override def operation(left: ASTree): ASTree = left.token match {
+    case Decimal(a) => Node(Decimal(math.tan(a)))
+    case _ => Node(TAN, left)
+  }
+
 }
 
 case object SQRT extends Function {
@@ -117,7 +128,7 @@ case object SQRT extends Function {
   // sqrt(x ^ y) = x ^ y -2  if y is a power of 2
   override def operation(left: ASTree): ASTree = left.token match {
     case POWER if isPowerOf2(left.right.token) => Node(POWER, left.left, newValOf(left.right)).simplify
-    case Decimal(a) => Node(Decimal(Math.sqrt(a)))
+    case Decimal(a) => Node(Decimal(math.sqrt(a)))
     case _ => Node(SQRT, left)
   }
 
@@ -142,7 +153,7 @@ case object LOG extends Function {
     case Decimal(1) => Node(Decimal(0))
     case Decimal(10) => Node(Decimal(1))
     case POWER if left.left.token == Decimal(10) => left.right
-    case Decimal(a) => Node(Decimal(Math.log10(a)))
+    case Decimal(a) => Node(Decimal(math.log10(a)))
     case _ => Node(LOG, left)
   }
 }
@@ -157,7 +168,7 @@ case object LN extends Function {
     case Decimal(1) => Node(Decimal(0))
     case E => Node(Decimal(1))
     case POWER if left.left.token == E => left.right
-    case Decimal(a) => Node(Decimal(Math.log(a)))
+    case Decimal(a) => Node(Decimal(math.log(a)))
     case _ => Node(LN, left)
   }
 }
@@ -204,7 +215,7 @@ case object SUBTRACT extends LeftAssoc {
     case (_, Decimal(0)) => left
     case (Decimal(0), _) => Node(NEGATE, right)
     case (x, y) if x == y => Node(Decimal(0))
-    case (Decimal(a), Decimal(b)) => if (b > a) Node(NEGATE, Node(Decimal(Math.abs(a - b)))) else Node(Decimal(a - b))
+    case (Decimal(a), Decimal(b)) => if (b > a) Node(NEGATE, Node(Decimal(math.abs(a - b)))) else Node(Decimal(a - b))
     case (_, _) => Node(SUBTRACT, left, right)
   }
 }
@@ -262,7 +273,7 @@ case object POWER extends RightAssoc {
     case (_, Decimal(1)) => left
     case (E, LN) => right.left
     case (Decimal(10), LOG) => right.left
-    case (Decimal(a), Decimal(b)) => Node(Decimal(Math.pow(a, b)))
+    case (Decimal(a), Decimal(b)) => Node(Decimal(math.pow(a, b)))
     case (_, _) => Node(POWER, left, right)
   }
 }

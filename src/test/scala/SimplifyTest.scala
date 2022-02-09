@@ -208,6 +208,18 @@ class SimplifyTest extends FunSuite {
   }
 
   // ------------------------------------------------------------
+  // Trig Functions
+  // ------------------------------------------------------------
+
+  test("sin(pi) => 0") {
+    testSimp("sin(pi)", "0.0")
+  }
+
+  test("sin(2 * pi) => sin(2 * pi)") {
+    testSimp("sin(2 * pi)", "sin((2.0*pi))")
+  }
+
+  // ------------------------------------------------------------
   // Helpers
   // ------------------------------------------------------------
   def testSimp(expression: String, expected: String): Unit = {
